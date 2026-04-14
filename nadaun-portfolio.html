@@ -779,12 +779,55 @@
     .cresult.ok { color: #2d7a2d; display: block; }
     .cresult.err { color: #c0392b; display: block; }
 
+    /* 모바일 전용 다크 헤더 */
+    .cmodal-mobile-header {
+      display: none;
+    }
     @media (max-width: 768px) {
       .cmodal-left { display: none; }
       .cmodal-right { transform: translateY(40px); width: 100%; }
       .cmodal-overlay.open .cmodal-right { transform: translateY(0); }
-      .cmodal-right-inner { padding: 60px 24px 40px; max-width: 100%; }
+      .cmodal-right-inner { padding: 28px 24px 40px; max-width: 100%; }
       .cfield-row { grid-template-columns: 1fr; gap: 0; }
+
+      .cmodal-mobile-header {
+        display: block;
+        background: var(--black);
+        padding: 44px 24px 28px;
+        position: relative;
+        overflow: hidden;
+      }
+      .cmodal-mobile-header-label {
+        font-family: var(--font-display);
+        font-size: 11px; font-weight: 600;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 12px;
+      }
+      .cmodal-mobile-header-title {
+        font-family: var(--font-display);
+        font-size: clamp(28px, 8vw, 40px);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        color: #fff;
+        margin: 0;
+      }
+      .cmodal-mobile-header-title em {
+        font-style: italic;
+        font-family: var(--font-serif);
+        font-weight: 300;
+        color: var(--gold);
+        font-size: 1.08em;
+      }
+      .cmodal-mobile-header-deco {
+        position: absolute;
+        width: 180px; height: 180px;
+        border: 0.5px solid rgba(251,178,0,0.12);
+        border-radius: 50%;
+        bottom: -60px; right: -40px;
+        pointer-events: none;
+      }
     }
   </style>
 </head>
@@ -986,9 +1029,10 @@ const mWords = [
   'Samsung','Hyundai','LG','CJ','LS','Lotte','SK','Hanwha','Posco','KT',
   'PEPSI','Meritz Financial','IMM Investment','Royal Salute','EssilorLuxottica','SYLFIRM X',
   'Banyan Tree','KICT','The New Grey','Vendors','Umicore',
-  'Kitchen Valley','Dunkin Donuts','CMDS','Hydra Arm','The K Hotel',
+  'Kitchen Valley','Dunkin Donuts','CMDS','The K Hotel',
   'LAON Band','Hecto Financial','Rich & Co.','Enver Gallery','Mirae DNS','Wyout Festival',
-  'Beethoven Philharmonic','Esteban','GoodRich Show','Human Intelligence','Beyblade'
+  'Beethoven Philharmonic','Esteban','GoodRich Show','Human Intelligence','Beyblade',
+  'Tilta','Manfrotto','Teradek','RED','ARRI'
 ];
 const mTrack = document.getElementById('mTrack');
 [...mWords,...mWords].forEach(w=>{
@@ -1391,6 +1435,12 @@ document.addEventListener('DOMContentLoaded', function() {
   <!-- 오른쪽 폼 패널 -->
   <div class="cmodal-right">
     <button class="cmodal-close" onclick="closeContact()">✕</button>
+    <!-- 모바일 전용 다크 헤더 -->
+    <div class="cmodal-mobile-header">
+      <div class="cmodal-mobile-header-label">Project NADAUN Team</div>
+      <h2 class="cmodal-mobile-header-title">Your Story,<br>Shot At Its <em>Finest.</em></h2>
+      <div class="cmodal-mobile-header-deco"></div>
+    </div>
     <div class="cmodal-right-inner">
       <div class="cform-eyebrow">Inquiry</div>
       <h3 class="cform-title">Let's Work Together</h3>
