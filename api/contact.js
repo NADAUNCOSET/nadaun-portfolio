@@ -9,11 +9,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '필수 항목을 입력해주세요.' });
   }
 
-  // Google Calendar 링크 생성
+  // Google Calendar 링크 생성 — 종료일은 +1일 (종일 이벤트)
   const eventTitle = encodeURIComponent(`[NADAUN] ${shootType} — ${name}`);
   const eventDetails = encodeURIComponent(`고객명: ${name}\n연락처: ${phone}\n촬영 종류: ${shootType}\n내용: ${message || '-'}`);
-  const dateStr = date.replace(/-/g, '');
-  const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${dateStr}/${dateStr}&details=${eventDetails}`;
+  const startDate = new Date(date);
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate() + 1);
+  const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
+  const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${fmt(startDate)}/${fmt(endDate)}&details=${eventDetails}`;
 
   const emailHtml = `
 <!DOCTYPE html>
@@ -57,7 +60,6 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'NADAUN Inquiry <onboarding@resend.dev>',
         to: ['rbsent.info@gmail.com'],
-        reply_to: phone,
         subject: `[문의] ${shootType} — ${name} (${date})`,
         html: emailHtml,
       }),

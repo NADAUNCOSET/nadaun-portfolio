@@ -1318,50 +1318,54 @@ function closeContact() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('cmodal').classList.contains('open')) closeContact();
+  if (e.key === 'Escape' && document.getElementById('cmodal') &&
+      document.getElementById('cmodal').classList.contains('open')) closeContact();
 });
-document.getElementById('cmodal').addEventListener('click', e => {
-  if (e.target === document.getElementById('cmodal')) closeContact();
-});
+// 오버레이 클릭 닫기 + 폼 submit — 모달 HTML이 아래에 있으므로 DOMContentLoaded 후 등록
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('cmodal').addEventListener('click', e => {
+    if (e.target === document.getElementById('cmodal')) closeContact();
+  });
 
-document.getElementById('contactForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const btn = document.getElementById('csubmitBtn');
-  const result = document.getElementById('cresult');
-  btn.disabled = true;
-  btn.textContent = '전송 중...';
-  result.className = 'cresult';
-  result.textContent = '';
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('csubmitBtn');
+    const result = document.getElementById('cresult');
+    btn.disabled = true;
+    btn.innerHTML = '전송 중...';
+    result.className = 'cresult';
+    result.textContent = '';
 
-  const data = {
-    name: document.getElementById('cf-name').value,
-    phone: document.getElementById('cf-phone').value,
-    shootType: document.getElementById('cf-shoot').value,
-    date: document.getElementById('cf-date').value,
-    message: document.getElementById('cf-message').value,
-  };
+    const data = {
+      name: document.getElementById('cf-name').value,
+      phone: document.getElementById('cf-phone').value,
+      shootType: document.getElementById('cf-shoot').value,
+      date: document.getElementById('cf-date').value,
+      message: document.getElementById('cf-message').value,
+    };
 
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    const json = await res.json();
-    if (res.ok) {
-      result.className = 'cresult ok';
-      result.textContent = '문의가 접수되었습니다. 빠르게 연락드리겠습니다.';
-      this.reset();
-    } else {
-      throw new Error(json.error || '오류가 발생했습니다.');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        result.className = 'cresult ok';
+        result.textContent = '문의가 접수되었습니다. 빠르게 연락드리겠습니다.';
+        this.reset();
+      } else {
+        throw new Error(json.error || '오류가 발생했습니다.');
+      }
+    } catch (err) {
+      result.className = 'cresult err';
+      result.textContent = err.message;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '문의 보내기 <span class="csubmit-arrow">→</span>';
     }
-  } catch (err) {
-    result.className = 'cresult err';
-    result.textContent = err.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '문의 보내기';
-  }
+  });
 });
 </script>
 
