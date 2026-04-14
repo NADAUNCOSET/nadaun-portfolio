@@ -58,7 +58,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'NADAUN Inquiry <onboarding@resend.dev>',
+        from: 'NADAUN Landing Page <onboarding@resend.dev>',
         to: ['rbsent.info@gmail.com'],
         subject: `[문의] ${shootType} — ${name} (${date})`,
         html: emailHtml,
