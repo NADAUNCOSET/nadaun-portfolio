@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NADAUN — Visual Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,200;0,300;0,400;0,500;0,700;0,900;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --black:     #0A0A0A;
+      --black-mid: #141414;
+      --dark-card: #181818;
+      --off-white: #F0EEE9;
+      --gold:      #FBB200;
+      --gold-deep: #D4960A;
+      --mid-gray:  #666360;
+      --dim-gray:  #2E2C2A;
+
+      --font-display: 'Inter Tight', 'Pretendard', sans-serif;
+      --font-serif:   'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Pretendard', -apple-system, sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth:   cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    ::selection { background: var(--gold); color: var(--black); }
+
+    html, body {
+      font-family: var(--font-body);
+      background: var(--black);
+      color: var(--off-white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CURSOR ─── */
+    #cursor {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--off-white);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: width .35s var(--ease-out-expo),
+                  height .35s var(--ease-out-expo),
+                  border-color .25s, opacity .3s;
+      mix-blend-mode: difference;
+    }
+    #cursor.big { width: 64px; height: 64px; }
+    #cursor.hidden { opacity: 0; }
+    #cursor-dot { display: none; }
+    @media (hover: none) { #cursor, #cursor-dot { display: none; } body { cursor: auto; } }
+
+    /* ─── LOADER (web-demo 동일 구조) ─── */
+    #loader {
+      position: fixed; inset: 0; z-index: 8888;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; overflow: hidden;
+      will-change: transform;
+    }
+    .loader-mask {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%;
+    }
+    .loader-mask-text {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 18vw, 280px);
+      font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.15);
+      -webkit-text-fill-color: transparent;
+      position: relative; z-index: 2;
+      white-space: nowrap; will-change: transform;
+    }
+    .loader-mask-fill {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 18vw, 280px);
+      font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase;
+      position: absolute; z-index: 3;
+      white-space: nowrap; will-change: clip-path;
+      background: linear-gradient(135deg, #5A5856 0%, #A09D98 20%, #FBB200 45%, #D4960A 60%, #E8E6E1 80%, #1a1a1a 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      clip-path: inset(0 100% 0 0);
+    }
+    .loader-sub {
+      position: absolute; bottom: clamp(32px, 5vh, 60px); left: clamp(32px, 4vw, 60px);
+      font-family: var(--font-serif); font-size: clamp(11px, 1vw, 13px);
+      font-style: italic; color: rgba(255,255,255,0.25); letter-spacing: 0.05em; z-index: 3;
+    }
+    .loader-count {
+      position: absolute; bottom: clamp(32px, 5vh, 60px); right: clamp(32px, 4vw, 60px);
+      font-family: var(--font-display); font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 400; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; z-index: 3;
+    }
+    .loader-progress {
+      position: absolute; bottom: 0; left: 0;
+      width: 0%; height: 3px;
+      background: linear-gradient(90deg, #A09D98, #FBB200, #D4960A);
+      z-index: 4;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; z-index: 100;
+      background: transparent;
+      transition: background .4s, backdrop-filter .4s, border-color .4s;
+      border-bottom: .5px solid transparent;
+    }
+    header.scrolled {
+      background: rgba(10,10,10,.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom-color: rgba(255,255,255,.06);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo img { height: 36px; filter: brightness(0) invert(1); }   /* 24×1.5 */
+    .logo-fallback {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 900; letter-spacing: -.02em;  /* 17×1.5 */
+      color: var(--off-white);
+    }
+    .logo-fallback span { color: var(--gold); }
+    nav { display: flex; align-items: center; gap: 36px; }
+    nav a {
+      font-family: var(--font-display); font-size: 13px; font-weight: 500; /* 12×1.5≈18 → 13 */
+      letter-spacing: .1em; text-transform: uppercase; color: var(--mid-gray);
+      text-decoration: none; transition: color .2s;
+    }
+    nav a:hover { color: var(--off-white); }
+    .nav-contact {
+      font-family: var(--font-display); font-size: 13px; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--black); background: var(--gold);
+      padding: 11px 28px; border-radius: 2px; text-decoration: none;
+      transition: background .2s;
+    }
+    .nav-contact:hover { background: var(--gold-deep); }
+
+    /* 모바일 햄버거 */
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px; cursor: none;
+      background: none; border: none; padding: 4px;
+    }
+    .nav-toggle span {
+      display: block; width: 24px; height: 1.5px;
+      background: var(--off-white); transition: transform .3s, opacity .3s;
+    }
+    .nav-open .nav-toggle span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav-open .nav-toggle span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .nav-mobile {
+      display: none; position: fixed; inset: 72px 0 0 0;
+      background: rgba(10,10,10,.97); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 32px; z-index: 99;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: var(--font-display); font-size: 28px; font-weight: 700;
+      letter-spacing: -.02em; color: var(--off-white); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-mobile a:hover { color: var(--gold); }
+
+    @media (max-width: 768px) {
+      header { padding: 0 20px; height: 60px; }
+      .logo img { height: 28px; }
+      .logo-fallback { font-size: 20px; }
+      nav { display: none; }
+      .nav-toggle { display: flex; }
+      .nav-mobile { top: 60px; }
+    }
+
+    /* ─── MARQUEE ─── */
+    .marquee {
+      margin-top: 72px;
+      border-top: .5px solid rgba(255,255,255,.06);
+      border-bottom: .5px solid rgba(255,255,255,.06);
+      padding: 20px 0; overflow: hidden;
+      background: var(--black-mid);
+    }
+    .marquee-track { display: flex; white-space: nowrap; }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 32px; padding: 0 32px;
+      font-family: var(--font-display); font-size: 22px; font-weight: 500;
+      letter-spacing: .04em; color: var(--mid-gray);
+    }
+    .marquee-dot { width: 3px; height: 3px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+
+    /* ─── PROJECTS GRID ─── */
+    .projects-wrap { padding: 56px 52px 140px; }
+
+    .grid-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 44px; gap: 24px;
+    }
+    .grid-title {
+      font-family: var(--font-display); font-size: clamp(36px, 4.5vw, 72px);
+      font-weight: 800; letter-spacing: -.03em; line-height: 1;
+      color: var(--off-white);
+    }
+    .grid-title em {
+      font-family: var(--font-display); font-style: normal;
+      font-weight: 800; color: var(--gold);
+    }
+    .grid-count {
+      font-family: var(--font-display); font-size: 12px; font-weight: 300;
+      letter-spacing: .08em; color: var(--mid-gray);
+    }
+
+    /* Filter */
+    .filters {
+      display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 6px; }
+    .filter-btn {
+      font-family: var(--font-display); font-size: 12px; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--mid-gray); background: transparent;
+      border: .5px solid var(--dim-gray); border-radius: 100px;
+      padding: 8px 20px; cursor: none; transition: all .2s;
+      white-space: nowrap;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      color: var(--black); background: var(--gold); border-color: var(--gold);
+    }
+    .filter-sub {
+      display: flex; gap: 5px; flex-wrap: wrap; padding-left: 4px;
+    }
+    .filter-sub-btn {
+      font-family: var(--font-display); font-size: 10px; font-weight: 400;
+      letter-spacing: .06em; color: var(--mid-gray); background: transparent;
+      border: .5px solid rgba(255,255,255,.1); border-radius: 100px;
+      padding: 4px 12px; cursor: none; transition: all .2s; white-space: nowrap;
+    }
+    .filter-sub-btn.active, .filter-sub-btn:hover {
+      color: var(--gold); border-color: var(--gold);
+    }
+
+    /* Grid — 6열 정렬, 사진 짤림 없음 (contain) */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .pcard {
+      position: relative; border-radius: 3px;
+      background: #111; cursor: none;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+    }
+    /* span 클래스 무효화 — columns 레이아웃에선 불필요 */
+    .pcard.c7,.pcard.c5,.pcard.c4,.pcard.c8,.pcard.c6 { }
+
+    .pcard-img {
+      width: 100%; height: 100%; display: block;
+      object-fit: contain;
+      transition: filter .4s;
+      filter: saturate(.8) brightness(.9);
+    }
+    .pcard:hover .pcard-img {
+      filter: saturate(1) brightness(.75);
+    }
+    .pcard-info {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 28px;
+      background: linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 55%);
+      opacity: 0; transform: translateY(6px);
+      transition: opacity .3s, transform .3s;
+    }
+    .pcard:hover .pcard-info { opacity: 1; transform: translateY(0); }
+    .pcard-cat {
+      font-family: var(--font-display); font-size: 10px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
+    }
+    .pcard-name {
+      font-family: var(--font-serif); font-size: clamp(22px, 2.4vw, 36px);
+      font-weight: 300; font-style: italic; letter-spacing: .01em; line-height: 1.1; margin-bottom: 4px;
+    }
+    .pcard-meta {
+      font-size: 12px; color: rgba(240,238,233,.5); letter-spacing: .02em;
+    }
+    .pcard-badge {
+      position: absolute; top: 16px; left: 16px;
+      font-family: var(--font-display); font-size: 10px; font-weight: 500;
+      letter-spacing: .08em; color: rgba(240,238,233,.7);
+      background: rgba(0,0,0,.55); backdrop-filter: blur(8px);
+      padding: 5px 12px; border-radius: 100px;
+    }
+    .pcard-open {
+      position: absolute; top: 16px; right: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: .5px solid rgba(255,255,255,.25);
+      background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--off-white); font-size: 16px;
+      opacity: 0; transform: scale(.8);
+      transition: opacity .3s, transform .3s;
+    }
+    .pcard:hover .pcard-open { opacity: 1; transform: scale(1); }
+
+    .pcard { opacity: 1; }
+
+    @media (max-width: 1024px) {
+      .projects-wrap { padding: 48px 32px 110px; }
+      .projects-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .projects-wrap { padding: 32px 16px 80px; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-title { font-size: clamp(28px, 8vw, 40px); }
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+        padding: 68px 8px 20px;
+      }
+      .gallery-header { padding: 0 16px; }
+      footer { padding: 48px 20px 28px; }
+      .footer-row { flex-direction: column; gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .marquee { margin-top: 60px; }
+    }
+
+    /* ─── GALLERY OVERLAY ─── */
+    #gallery {
+      position: fixed; inset: 0; z-index: 500;
+      background: var(--black);
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s;
+      display: flex; flex-direction: column;
+    }
+    #gallery.open { opacity: 1; pointer-events: all; }
+
+    .gallery-header {
+      position: absolute; top: 0; left: 0; right: 0; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px 0 24px; z-index: 10;
+      background: rgba(10,10,10,.92);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: .5px solid rgba(255,255,255,.06);
+    }
+    .gallery-meta { overflow: hidden; }
+    .gallery-proj-name {
+      font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      letter-spacing: -.02em; transform: translateY(100%);
+      transition: transform .5s var(--ease-out-expo);
+    }
+    #gallery.open .gallery-proj-name { transform: translateY(0); }
+    .gallery-proj-sub {
+      font-family: var(--font-display); font-size: 11px; font-weight: 300;
+      letter-spacing: .08em; color: var(--mid-gray); margin-top: 2px;
+    }
+    .gallery-close {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: .5px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--off-white); font-size: 18px; cursor: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .3s;
+    }
+    .gallery-close:hover { background: rgba(255,255,255,.14); transform: rotate(90deg); }
+
+    /* Photo grid inside gallery */
+    .gallery-grid {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 72px 6px 6px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      align-content: start;
+      scrollbar-width: thin;
+      scrollbar-color: var(--dim-gray) transparent;
+    }
+    .gallery-grid::-webkit-scrollbar { width: 3px; }
+    .gallery-grid::-webkit-scrollbar-thumb { background: var(--dim-gray); border-radius: 2px; }
+
+    /* 호버 시 그 사진만 살짝 축소 — 나머지 그대로 */
+    .gphoto {
+      transition: transform .35s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gphoto:hover {
+      transform: scale(0.96);
+      z-index: 10;
+    }
+
+    .gphoto {
+      position: relative; border-radius: 1px;
+      cursor: none; background: #111;
+      aspect-ratio: 3/2; overflow: hidden;
+      will-change: transform;
+      transition: transform .4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gphoto img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: saturate(.88);
+    }
+    .gphoto-num {
+      position: absolute; bottom: 6px; right: 6px;
+      font-family: var(--font-display); font-size: 9px; font-weight: 300;
+      letter-spacing: .06em; color: rgba(240,238,233,.6);
+      opacity: 0; transition: opacity .2s;
+    }
+    .gphoto:hover .gphoto-num { opacity: 1; }
+
+    @media (max-width: 1024px) {
+      .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); padding-top: 64px; }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ─── PHOTO SCROLL VIEWER ─── */
+    #photoview {
+      position: fixed; inset: 0; z-index: 600;
+      background: #050505;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    #photoview.open { opacity: 1; pointer-events: all; }
+
+    .pv-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; z-index: 610;
+      background: linear-gradient(to bottom, rgba(5,5,5,.95) 65%, transparent);
+      pointer-events: none;
+    }
+    #photoview.open .pv-header { pointer-events: all; }
+
+    .pv-meta {
+      font-family: var(--font-display); font-size: 12px; font-weight: 300;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+    }
+    .pv-close {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: .5px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--off-white); font-size: 15px; cursor: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .3s;
+    }
+    .pv-close:hover { background: rgba(255,255,255,.16); transform: rotate(90deg); }
+
+    .pv-scroll {
+      position: absolute; inset: 0;
+      overflow-y: auto; overflow-x: hidden;
+      padding-top: 52px;
+      scrollbar-width: none;
+    }
+    .pv-scroll::-webkit-scrollbar { display: none; }
+
+    /* 커스텀 사이드 스크러버 */
+    .pv-scrubber {
+      position: absolute; right: 4px; top: 60px; bottom: 10px;
+      width: 12px; z-index: 20; cursor: pointer;
+      display: flex; justify-content: center;
+    }
+    .pv-scrub-track {
+      width: 2px; height: 100%;
+      background: rgba(255,255,255,.1);
+      border-radius: 1px; position: relative;
+    }
+    .pv-scrub-thumb {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 6px; border-radius: 3px;
+      background: var(--gold);
+      min-height: 16px;
+      transition: width .15s, background .15s;
+      pointer-events: none;
+    }
+    .pv-scrubber:hover .pv-scrub-thumb { width: 8px; background: #ffd04d; }
+
+    /* Masonry — 검은 공간 없이 자연스럽게 채움 */
+    .pv-grid {
+      column-count: 2;
+      column-gap: 3px;
+      padding: 3px;
+    }
+    @media (min-width: 2000px)  { .pv-grid { column-count: 3; } }
+    @media (min-width: 3000px)  { .pv-grid { column-count: 4; } }
+    @media (max-width: 1099px)  { .pv-grid { column-count: 1; } }
+
+    .pv-img {
+      display: block;
+      width: 100%; height: auto;
+      margin-bottom: 3px;
+      break-inside: avoid;
+      line-height: 0;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+    /* 이미지 위 투명 오버레이 — 우클릭·드래그 차단용 */
+    .pv-img-wrap {
+      position: relative;
+      display: block;
+      break-inside: avoid;
+      margin-bottom: 3px;
+      line-height: 0;
+    }
+    .pv-img-wrap img {
+      display: block;
+      width: 100%; height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+    .pv-img-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: default;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: .5px solid rgba(255,255,255,.06);
+      padding: 60px 48px 36px;
+      background: var(--black-mid);
+    }
+    .footer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .footer-logo img { height: 22px; filter: brightness(0) invert(1); }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a {
+      font-family: var(--font-display); font-size: 12px; font-weight: 400;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--mid-gray); text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy {
+      font-size: 12px; color: var(--dim-gray); letter-spacing: .04em;
+    }
+    @media (max-width: 768px) {
+      footer { padding: 48px 20px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-mask">
+    <div class="loader-mask-text" id="loaderText">NADAUN</div>
+    <div class="loader-mask-fill" id="loaderFill">NADAUN</div>
+  </div>
+  <div class="loader-sub">Event &amp; Corporate Photography</div>
+  <div class="loader-count" id="loaderCount">0%</div>
+  <div class="loader-progress" id="loaderProgress"></div>
+</div>
+
+<!-- HEADER -->
+<header id="hdr">
+  <a href="nadaun-portfolio.html" class="logo">
+    <img src="images/nadaun_logo.png" alt="NADAUN"
+         onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
+    <span id="logoFb" class="logo-fallback" style="display:none">NADAUN<span>.</span></span>
+  </a>
+  <nav>
+    <a href="#">Projects</a>
+    <a href="#" class="nav-contact">Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="메뉴">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- 모바일 메뉴 -->
+<div class="nav-mobile" id="navMobile">
+  <a href="#" onclick="closeMobileNav()">Projects</a>
+  <a href="#" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track" id="mTrack"></div>
+</div>
+
+<!-- PROJECTS -->
+<section class="projects-wrap">
+  <div class="grid-header">
+    <span class="grid-count" id="projCount">35 Projects</span>
+  </div>
+  <div class="filters" id="filterWrap"></div>
+  <div class="projects-grid" id="pGrid"></div>
+</section>
+
+<!-- GALLERY OVERLAY (all photos of one project) -->
+<div id="gallery">
+  <div class="gallery-header">
+    <div class="gallery-meta">
+      <div class="gallery-proj-name" id="galName">—</div>
+      <div class="gallery-proj-sub" id="galSub">—</div>
+    </div>
+    <button class="gallery-close" id="galClose">✕</button>
+  </div>
+  <div class="gallery-grid" id="galGrid"></div>
+</div>
+
+<!-- PHOTO SCROLL VIEWER -->
+<div id="photoview">
+  <div class="pv-header">
+    <span class="pv-meta" id="pvMeta"></span>
+    <button class="pv-close" id="pvClose">✕</button>
+  </div>
+  <div class="pv-scroll" id="pvScroll"></div>
+  <div class="pv-scrubber" id="pvScrubber">
+    <div class="pv-scrub-track">
+      <div class="pv-scrub-thumb" id="pvThumb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-row">
+    <a href="nadaun-portfolio.html" class="footer-logo">
+      <img src="images/nadaun_logo.png" alt="NADAUN"
+           onerror="this.style.display='none'">
+    </a>
+    <div class="footer-links">
+      <a href="#">Instagram</a>
+      <a href="#">Behance</a>
+      <a href="mailto:hello@nadaun.com">Contact</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2025 NADAUN. All rights reserved.</p>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── DATA ── */
+function imgs(folder, count) {
+  return Array.from({length: count}, (_,i) => `images/portfolio/${folder}/${String(i).padStart(2,'0')}.jpg`);
+}
+
+const PROJECTS = [
+  /* ── 상단 주요 프로젝트 ── */
+  { id:0,  name:'PEPSI FESTA',              category:'Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgs('pepsi-festa',80) },
+  { id:1,  name:'Meritz Dream Ceremony',    category:'Corporate', year:'2026', cover:'images/portfolio/meritz-dream/00.jpg',     photos: imgs('meritz-dream',37) },
+  { id:2,  name:'Hanmaeum Fest',            category:'Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgs('hanmaeum-fest',60) },
+  { id:3,  name:'IMM Year-End',             category:'Corporate', year:'2022', cover:'images/portfolio/imm-yearend/00.jpg',      photos: imgs('imm-yearend',125) },
+  { id:4,  name:'Royal Salute',             category:'Corporate', year:'2023', cover:'images/portfolio/royal-salute/00.jpg',     photos: imgs('royal-salute',60) },
+  { id:5,  name:'Promised Play Festival',   category:'Festival',  year:'2023', cover:'images/portfolio/play-festival/00.jpg',    photos: imgs('play-festival',99) },
+  { id:6,  name:'Youngsil Beyblade',        category:'Corporate', year:'2024', cover:'images/portfolio/beyblade-2024/00.jpg',    photos: imgs('beyblade-2024',146) },
+  { id:7,  name:'Varilux Seoul',            category:'Corporate', year:'2025', cover:'images/portfolio/varilux-seoul/00.jpg',    photos: imgs('varilux-seoul',96) },
+  { id:8,  name:'Varilux Busan',            category:'Corporate', year:'2025', cover:'images/portfolio/varilux-busan/00.jpg',    photos: imgs('varilux-busan',137) },
+  { id:9,  name:'SYLFIRM X',                category:'Corporate', year:'2025', cover:'images/portfolio/sylfirm/00.jpg',          photos: imgs('sylfirm',169) },
+  { id:10, name:'Banyan Tree CAT',          category:'Corporate', year:'2025', cover:'images/portfolio/banyan-tree/00.jpg',      photos: imgs('banyan-tree',101) },
+  { id:11, name:'Beyblade',                 category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-aug/00.jpg',     photos: imgs('beyblade-aug',173) },
+  /* ── 이하 일반 ── */
+  { id:12, name:'Beethoven Concert',        category:'Concert',   year:'2022', cover:'images/portfolio/beethoven/00.jpg',       photos: imgs('beethoven',32) },
+  { id:13, name:'Estevan',                  category:'Concert',   year:'2022', cover:'images/portfolio/estevan/00.jpg',          photos: imgs('estevan',29) },
+  { id:14, name:'JB Sketch',                category:'Corporate', year:'2022', cover:'images/portfolio/jb-sketch/00.jpg',        photos: imgs('jb-sketch',56) },
+  { id:15, name:'Kitchen Valley',           category:'Corporate', year:'2022', cover:'images/portfolio/kitchen-valley-1/00.jpg', photos: [...imgs('kitchen-valley-1',7),...imgs('kitchen-valley-2',8)] },
+  { id:16, name:'Hecto',                    category:'Corporate', year:'2022', cover:'images/portfolio/hecto/00.jpg',            photos: imgs('hecto',20) },
+  { id:17, name:'Dunkin Naju',              category:'Corporate', year:'2022', cover:'images/portfolio/dunkin-naju/00.jpg',      photos: imgs('dunkin-naju',15) },
+  { id:18, name:'Wyout Camping Festival',   category:'Festival',  year:'2022', cover:'images/portfolio/wyout-camping/00.jpg',    photos: imgs('wyout-camping',57) },
+  { id:19, name:'IMM Family Event',         category:'Corporate', year:'2022', cover:'images/portfolio/imm-family/00.jpg',       photos: imgs('imm-family',15) },
+  { id:20, name:'Rich&Co',                  category:'Corporate', year:'2022', cover:'images/portfolio/rich-n-co/00.jpg',        photos: imgs('rich-n-co',51) },
+  { id:21, name:'Enver Gallery',            category:'Corporate', year:'2022', cover:'images/portfolio/enver-gallery/00.jpg',    photos: imgs('enver-gallery',52) },
+  { id:22, name:'Mirae DNS',                category:'Corporate', year:'2022', cover:'images/portfolio/mirae-dns/00.jpg',        photos: imgs('mirae-dns',63) },
+  { id:23, name:'Ministry of Employment',   category:'Corporate', year:'2022', cover:'images/portfolio/moel/00.jpg',             photos: imgs('moel',67) },
+  { id:24, name:'Umicore',                  category:'Corporate', year:'2022', cover:'images/portfolio/umicore/00.jpg',          photos: imgs('umicore',88) },
+  { id:25, name:'Interior Shoot',           category:'Corporate', year:'2023', cover:'images/portfolio/interior/00.jpg',         photos: imgs('interior',34) },
+  { id:26, name:'CMDS',                     category:'Corporate', year:'2025', cover:'images/portfolio/cmds/00.jpg',             photos: imgs('cmds',38) },
+  { id:27, name:'Youngsil N Festival',      category:'Festival',  year:'2025', cover:'images/portfolio/n-festival/00.jpg',       photos: imgs('n-festival',30) },
+  { id:28, name:'Youngsil Beyblade II',     category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-2025/00.jpg',    photos: imgs('beyblade-2025',82) },
+  { id:29, name:'Hydra Arm',                category:'Corporate', year:'2025', cover:'images/portfolio/hydra-arm/00.jpg',        photos: imgs('hydra-arm',30) },
+  { id:30, name:'The K',                    category:'Corporate', year:'2025', cover:'images/portfolio/the-k/00.jpg',            photos: imgs('the-k',68) },
+  { id:31, name:'KICT',                     category:'Corporate', year:'2025', cover:'images/portfolio/kict/00.jpg',             photos: imgs('kict',96) },
+  { id:32, name:'THE NEW GREY',             category:'Corporate', year:'2025', cover:'images/portfolio/thenewgrey/00.jpg',       photos: imgs('thenewgrey',105) },
+  { id:33, name:'VENDORS',                  category:'Corporate', year:'2025', cover:'images/portfolio/vendors/00.jpg',          photos: imgs('vendors',67) },
+  { id:34, name:'Human Intelligence Conf.', category:'Corporate', year:'2026', cover:'images/portfolio/human-intel/00.jpg',      photos: imgs('human-intel',98) }
+];
+
+const CATS_MAIN = ['all','Corporate','Concert','Festival','지면','앨범','Business Profile','Family','Magazine'];
+const COLS = ['c6','c6','c6','c6','c6','c6'];
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.addEventListener('mouseleave', () => cur.classList.add('hidden'));
+document.addEventListener('mouseenter', () => cur.classList.remove('hidden'));
+
+function addHover(el){ el.addEventListener('mouseenter',()=>cur.classList.add('big')); el.addEventListener('mouseleave',()=>cur.classList.remove('big')); }
+
+/* ── LOADER (web-demo 동일 시퀀스) ── */
+const loaderEl    = document.getElementById('loader');
+const loaderText  = document.getElementById('loaderText');
+const loaderFill  = document.getElementById('loaderFill');
+const loaderProg  = document.getElementById('loaderProgress');
+const loaderCount = document.getElementById('loaderCount');
+
+gsap.set([loaderText, loaderFill], { y: 40, opacity: 0 });
+gsap.set('.loader-sub', { opacity: 0, y: 10 });
+
+const loaderTl = gsap.timeline();
+let prog = { v: 0 };
+
+loaderTl
+  // Phase 1: 아웃라인 글씨 아래서 올라옴
+  .to([loaderText, loaderFill], { y: 0, opacity: 1, duration: 1.0, ease: 'power3.out' })
+  .to('.loader-sub', { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.4')
+  // Phase 2: 왼→오 채워지며 프로그레스 동기화
+  .to(loaderFill,  { clipPath: 'inset(0 0% 0 0)', duration: 2.4, ease: 'power2.inOut' }, 1.0)
+  .to(loaderProg,  { width: '100%',               duration: 2.4, ease: 'power2.inOut' }, 1.0)
+  .to(prog, { v: 100, duration: 2.4, ease: 'power2.inOut',
+    onUpdate: ()=>{ loaderCount.textContent = Math.round(prog.v) + '%'; }
+  }, 1.0)
+  // Phase 3: 요소들 위로 사라짐
+  .to(['.loader-sub', loaderCount, loaderProg], { opacity: 0, y: -20, duration: 0.4, ease: 'power2.in', delay: 0.3 })
+  .to([loaderText, loaderFill], { y: -80, opacity: 0, duration: 0.5, ease: 'power3.in' }, '-=0.2')
+  // Phase 4: 로더 커튼 위로 벗겨짐
+  .to(loaderEl, { yPercent: -100, duration: 0.9, ease: 'power3.inOut',
+    onComplete: ()=>{ loaderEl.style.display='none'; }
+  }, '-=0.1')
+  // Phase 5: 헤더 등장
+  .from('#hdr', { y: -72, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.5');
+
+/* ── MARQUEE ── */
+const mWords = [
+  'PEPSI','Meritz Financial','IMM Investment','Royal Salute','Youngsil','Varilux','SYLFIRM X',
+  'Banyan Tree','KICT','The New Grey','Vendors','Ministry of Employment','Umicore',
+  'Kitchen Valley','Dunkin Donuts','CMDS','Lee Dong-wook','Hydra Arm','The K Hotel',
+  'LAON Band','Hecto','Rich & Co','Enver Gallery','Mirae DNS','Wyout Festival',
+  'Beethoven Philharmonic','Estevan','GoodRich Show','Human Intelligence','Beyblade'
+];
+const mTrack = document.getElementById('mTrack');
+[...mWords,...mWords].forEach(w=>{
+  const s=document.createElement('span'); s.className='marquee-item';
+  s.innerHTML=`${w}<span class="marquee-dot"></span>`; mTrack.appendChild(s);
+});
+gsap.to(mTrack,{ x:-mTrack.scrollWidth/2, duration:60, ease:'none', repeat:-1 });
+
+/* ── BUILD PROJECT GRID ── */
+const pGrid = document.getElementById('pGrid');
+
+function buildGrid(){
+  pGrid.innerHTML='';
+  getFilteredProjects().forEach((proj,i)=>{
+    const col = COLS[i % COLS.length];
+    const card = document.createElement('div');
+    card.className=`pcard ${col}`;
+    card.dataset.id = proj.id;
+    card.innerHTML=`
+      <img class="pcard-img" src="${proj.cover}" alt="${proj.name}" loading="${i<2?'eager':'lazy'}">
+      <div class="pcard-info">
+        <div class="pcard-cat">${proj.category}</div>
+        <div class="pcard-name">${proj.name}</div>
+        <div class="pcard-meta">${proj.photos.length} Photos</div>
+      </div>
+      <div class="pcard-badge">${proj.photos.length} Photos</div>
+      <div class="pcard-open">↗</div>
+    `;
+    pGrid.appendChild(card);
+    addHover(card);
+
+    // 카드 등장 애니메이션
+    gsap.from(card, { opacity:0, y:28, duration:.65, ease:'power3.out', delay: i*0.1 });
+
+    card.addEventListener('click',()=>openLightbox(proj.id, 0));
+  });
+}
+
+/* ── FILTERS (대주제 탭 + 하위 드롭다운) ── */
+const filterWrap = document.getElementById('filterWrap');
+let activeMain = 'all', activeSub = 'all';
+
+function buildFilters(){
+  filterWrap.innerHTML='';
+
+  CATS_MAIN.forEach(cat=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'filter-group';
+
+    const btn = document.createElement('button');
+    btn.className='filter-btn'+(cat===activeMain?' active':'');
+    btn.textContent = cat==='all'?'All':cat;
+    btn.dataset.cat = cat;
+
+    btn.addEventListener('click',()=>{
+      activeMain = cat; activeSub = 'all';
+      buildFilters(); buildGrid();
+    });
+    addHover(btn); wrap.appendChild(btn);
+
+    // 하위 메뉴
+    if(cat !== 'all' && cat === activeMain){
+      const subs = [...new Set(PROJECTS.filter(p=>p.category===cat).map(p=>p.sub))];
+      if(subs.length > 1){
+        const subRow = document.createElement('div');
+        subRow.className = 'filter-sub';
+
+        const allBtn = document.createElement('button');
+        allBtn.className='filter-sub-btn'+(activeSub==='all'?' active':'');
+        allBtn.textContent = '전체';
+        allBtn.addEventListener('click',()=>{ activeSub='all'; buildFilters(); buildGrid(); });
+        addHover(allBtn); subRow.appendChild(allBtn);
+
+        subs.forEach(s=>{
+          const sb = document.createElement('button');
+          sb.className='filter-sub-btn'+(activeSub===s?' active':'');
+          sb.textContent = s;
+          sb.addEventListener('click',()=>{ activeSub=s; buildFilters(); buildGrid(); });
+          addHover(sb); subRow.appendChild(sb);
+        });
+        wrap.appendChild(subRow);
+      }
+    }
+    filterWrap.appendChild(wrap);
+  });
+}
+
+function getFilteredProjects(){
+  return PROJECTS.filter(p=>{
+    if(activeMain==='all') return true;
+    if(p.category!==activeMain) return false;
+    if(activeSub==='all') return true;
+    return p.sub===activeSub;
+  });
+}
+
+buildFilters(); buildGrid();
+
+/* ── HEADER SCROLL ── */
+window.addEventListener('scroll',()=>
+  document.getElementById('hdr').classList.toggle('scrolled',scrollY>30));
+
+/* ── MOBILE NAV ── */
+const navToggle = document.getElementById('navToggle');
+const navMobile = document.getElementById('navMobile');
+navToggle.addEventListener('click',()=>{
+  const open = navMobile.classList.toggle('open');
+  document.getElementById('hdr').classList.toggle('nav-open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+function closeMobileNav(){
+  navMobile.classList.remove('open');
+  document.getElementById('hdr').classList.remove('nav-open');
+  document.body.style.overflow='';
+}
+
+/* ── GALLERY OVERLAY ── */
+let activeProj = null;
+
+function openGallery(id){
+  activeProj = PROJECTS.find(p=>p.id===id);
+  document.getElementById('galName').textContent = activeProj.name;
+  document.getElementById('galSub').textContent = `${activeProj.category} · ${activeProj.year} · ${activeProj.photos.length} Photos`;
+
+  const grid = document.getElementById('galGrid');
+  grid.innerHTML='';
+  activeProj.photos.forEach((src,i)=>{
+    const div=document.createElement('div');
+    div.className='gphoto'; div.dataset.idx=i;
+    div.innerHTML=`<img src="${src}" alt="" loading="lazy"><span class="gphoto-num">${String(i+1).padStart(2,'0')}</span>`;
+    addHover(div);
+    div.addEventListener('click',()=>openLightbox(id,i));
+    grid.appendChild(div);
+  });
+
+  document.getElementById('gallery').classList.add('open');
+  document.body.style.overflow='hidden';
+
+  /* magnetic zoom effect — mouse proximity */
+  initMagnetic();
+}
+
+function closeGallery(){
+  document.getElementById('gallery').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('galClose').addEventListener('click',closeGallery);
+addHover(document.getElementById('galClose'));
+
+/* CSS hover만으로 처리 — initMagnetic 불필요 */
+function initMagnetic(){ /* no-op */ }
+
+/* ── PHOTO SCROLL VIEWER ── */
+let pvProj = null;
+let pvAutoRaf = null;
+let pvUserScrollTimer = null;
+let pvNextTimer = null;
+const PV_SPEED = 4.0; // px per frame
+
+function pvNextProject() {
+  // 현재 필터 기준으로 보이는 프로젝트 목록에서 다음으로 이동
+  const visible = getFilteredProjects();
+  const curIdx = visible.findIndex(p => p.id === pvProj.id);
+  const nextProj = visible[(curIdx + 1) % visible.length];
+  if (nextProj) openLightbox(nextProj.id, 0);
+}
+
+function pvStartAutoScroll() {
+  pvStopAutoScroll();
+  clearTimeout(pvNextTimer);
+  const scroll = document.getElementById('pvScroll');
+  function step() {
+    const maxScroll = scroll.scrollHeight - scroll.clientHeight;
+    // 이미지 아직 로딩 중(maxScroll이 작음)이면 멈추지 않고 계속 진행
+    if (maxScroll > 50 && scroll.scrollTop >= maxScroll - 2) {
+      pvStopAutoScroll();
+      // 1.5초 후 다음 프로젝트로 자동 전환
+      pvNextTimer = setTimeout(pvNextProject, 1500);
+      return;
+    }
+    scroll.scrollTop += PV_SPEED;
+    pvAutoRaf = requestAnimationFrame(step);
+  }
+  pvAutoRaf = requestAnimationFrame(step);
+}
+
+function pvStopAutoScroll() {
+  if (pvAutoRaf) { cancelAnimationFrame(pvAutoRaf); pvAutoRaf = null; }
+}
+
+function pvPauseAndResume() {
+  pvStopAutoScroll();
+  clearTimeout(pvNextTimer);
+  clearTimeout(pvUserScrollTimer);
+  pvUserScrollTimer = setTimeout(pvStartAutoScroll, 2000);
+}
+
+function openLightbox(projId, idx) {
+  pvProj = PROJECTS.find(p => p.id === projId);
+  const scroll = document.getElementById('pvScroll');
+
+  if (scroll.dataset.projId !== String(projId)) {
+    scroll.innerHTML = '';
+    scroll.dataset.projId = projId;
+    const grid = document.createElement('div');
+    grid.className = 'pv-grid';
+    pvProj.photos.forEach((src, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'pv-img-wrap';
+      wrap.id = `pv-${i}`;
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      img.loading = i < 6 ? 'eager' : 'lazy';
+      const shield = document.createElement('div');
+      shield.className = 'pv-img-shield';
+      wrap.appendChild(img);
+      wrap.appendChild(shield);
+      grid.appendChild(wrap);
+    });
+    scroll.appendChild(grid);
+  }
+
+  document.getElementById('pvMeta').textContent =
+    `${pvProj.name}  ·  ${pvProj.photos.length} Photos`;
+  document.getElementById('photoview').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  requestAnimationFrame(() => {
+    if (idx > 0) {
+      const target = document.getElementById(`pv-${idx}`);
+      if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+    } else {
+      scroll.scrollTop = 0;
+    }
+    pvStartAutoScroll();
+  });
+}
+
+function closeLightbox() {
+  pvStopAutoScroll();
+  clearTimeout(pvUserScrollTimer);
+  clearTimeout(pvNextTimer);
+  document.getElementById('photoview').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// 마우스 휠로 조작하면 오토스크롤 2초 일시정지 후 재개
+document.getElementById('pvScroll').addEventListener('wheel', pvPauseAndResume, { passive: true });
+document.getElementById('pvScroll').addEventListener('touchmove', pvPauseAndResume, { passive: true });
+
+/* ── 사이드 스크러버 ── */
+(function() {
+  const scrubber = document.getElementById('pvScrubber');
+  const thumb    = document.getElementById('pvThumb');
+  const scroll   = document.getElementById('pvScroll');
+  let dragging   = false;
+
+  function updateThumb() {
+    const maxScroll = scroll.scrollHeight - scroll.clientHeight;
+    if (maxScroll <= 0) return;
+    const trackH  = scrubber.getBoundingClientRect().height;
+    const ratio   = scroll.scrollTop / maxScroll;
+    const thumbH  = Math.max(16, trackH * (scroll.clientHeight / scroll.scrollHeight));
+    const thumbY  = ratio * (trackH - thumbH);
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top    = thumbY + 'px';
+  }
+
+  scroll.addEventListener('scroll', updateThumb, { passive: true });
+
+  function scrubTo(clientY) {
+    const rect    = scrubber.getBoundingClientRect();
+    const trackH  = rect.height;
+    const thumbH  = parseFloat(thumb.style.height) || 20;
+    const ratio   = Math.max(0, Math.min(1, (clientY - rect.top - thumbH / 2) / (trackH - thumbH)));
+    const maxScroll = scroll.scrollHeight - scroll.clientHeight;
+    scroll.scrollTop = ratio * maxScroll;
+    pvPauseAndResume();
+  }
+
+  scrubber.addEventListener('mousedown', e => {
+    dragging = true;
+    scrubTo(e.clientY);
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => { if (dragging) scrubTo(e.clientY); });
+  document.addEventListener('mouseup',   () => { dragging = false; });
+
+  // 터치
+  scrubber.addEventListener('touchstart', e => {
+    dragging = true; scrubTo(e.touches[0].clientY); e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove',  e => { if (dragging) scrubTo(e.touches[0].clientY); }, { passive: true });
+  document.addEventListener('touchend',   () => { dragging = false; });
+})();
+
+document.getElementById('pvClose').addEventListener('click', closeLightbox);
+addHover(document.getElementById('pvClose'));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('photoview').classList.contains('open')) {
+    if (e.key === 'Escape') closeLightbox();
+  } else if (document.getElementById('gallery').classList.contains('open')) {
+    if (e.key === 'Escape') closeGallery();
+  }
+});
+
+/* ── 사진 스크랩 방지 ── */
+// 포토뷰어 내부에서만 우클릭 차단
+document.getElementById('photoview').addEventListener('contextmenu', e => {
+  e.preventDefault();
+  return false;
+});
+// 전체 페이지 이미지 드래그 차단
+document.addEventListener('dragstart', e => {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+</script>
+</body>
+</html>
