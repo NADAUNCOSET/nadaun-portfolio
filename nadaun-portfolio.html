@@ -291,8 +291,8 @@
       letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
     }
     .pcard-name {
-      font-family: var(--font-serif); font-size: clamp(22px, 2.4vw, 36px);
-      font-weight: 300; font-style: italic; letter-spacing: .01em; line-height: 1.1; margin-bottom: 4px;
+      font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 28px);
+      font-weight: 600; font-style: normal; letter-spacing: -.01em; line-height: 1.1; margin-bottom: 4px;
     }
     .pcard-meta {
       font-size: 12px; color: rgba(240,238,233,.5); letter-spacing: .02em;
@@ -665,26 +665,26 @@ function imgs(folder, count) {
 
 const PROJECTS = [
   /* ── 상단 주요 프로젝트 ── */
-  { id:0,  name:'PEPSI FESTA',              category:'Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgs('pepsi-festa',80) },
+  { id:0,  name:'PEPSI FESTA',              category:'Concert & Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgs('pepsi-festa',80) },
   { id:1,  name:'Meritz Dream Ceremony',    category:'Corporate', year:'2026', cover:'images/portfolio/meritz-dream/00.jpg',     photos: imgs('meritz-dream',37) },
-  { id:2,  name:'Hanmaeum Fest',            category:'Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgs('hanmaeum-fest',60) },
+  { id:2,  name:'Hanmaeum Fest',            category:'Concert & Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgs('hanmaeum-fest',60) },
   { id:3,  name:'IMM Year-End',             category:'Corporate', year:'2022', cover:'images/portfolio/imm-yearend/00.jpg',      photos: imgs('imm-yearend',125) },
   { id:4,  name:'Royal Salute',             category:'Corporate', year:'2023', cover:'images/portfolio/royal-salute/00.jpg',     photos: imgs('royal-salute',60) },
-  { id:5,  name:'Promised Play Festival',   category:'Festival',  year:'2023', cover:'images/portfolio/play-festival/00.jpg',    photos: imgs('play-festival',99) },
+  { id:5,  name:'Promised Play Festival',   category:'Concert & Festival',  year:'2023', cover:'images/portfolio/play-festival/00.jpg',    photos: imgs('play-festival',99) },
   { id:6,  name:'Youngsil Beyblade',        category:'Corporate', year:'2024', cover:'images/portfolio/beyblade-2024/00.jpg',    photos: imgs('beyblade-2024',146) },
-  { id:7,  name:'Varilux Seoul',            category:'Corporate', year:'2025', cover:'images/portfolio/varilux-seoul/00.jpg',    photos: imgs('varilux-seoul',96) },
-  { id:8,  name:'Varilux Busan',            category:'Corporate', year:'2025', cover:'images/portfolio/varilux-busan/00.jpg',    photos: imgs('varilux-busan',137) },
+  { id:7,  name:'EssilorLuxottica Seoul',    category:'Corporate', year:'2025', cover:'images/portfolio/varilux-seoul/00.jpg',    photos: imgs('varilux-seoul',96) },
+  { id:8,  name:'EssilorLuxottica Busan',   category:'Corporate', year:'2025', cover:'images/portfolio/varilux-busan/00.jpg',    photos: imgs('varilux-busan',137) },
   { id:9,  name:'SYLFIRM X',                category:'Corporate', year:'2025', cover:'images/portfolio/sylfirm/00.jpg',          photos: imgs('sylfirm',169) },
   { id:10, name:'Banyan Tree CAT',          category:'Corporate', year:'2025', cover:'images/portfolio/banyan-tree/00.jpg',      photos: imgs('banyan-tree',101) },
   { id:11, name:'Beyblade',                 category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-aug/00.jpg',     photos: imgs('beyblade-aug',173) },
   /* ── 이하 일반 ── */
-  { id:12, name:'Beethoven Concert',        category:'Concert',   year:'2022', cover:'images/portfolio/beethoven/00.jpg',       photos: imgs('beethoven',32) },
-  { id:13, name:'Estevan',                  category:'Concert',   year:'2022', cover:'images/portfolio/estevan/00.jpg',          photos: imgs('estevan',29) },
-  { id:14, name:'JB Sketch',                category:'Corporate', year:'2022', cover:'images/portfolio/jb-sketch/00.jpg',        photos: imgs('jb-sketch',56) },
+  { id:12, name:'Beethoven Concert',        category:'Concert & Festival',   year:'2022', cover:'images/portfolio/beethoven/00.jpg',       photos: imgs('beethoven',32) },
+  { id:13, name:'Esteban',                  category:'Concert & Festival',   year:'2022', cover:'images/portfolio/estevan/00.jpg',          photos: imgs('estevan',29) },
+  { id:14, name:'JAY B CONCERT SKETCH',     category:'Concert & Festival',   year:'2022', cover:'images/portfolio/jb-sketch/00.jpg',        photos: imgs('jb-sketch',56) },
   { id:15, name:'Kitchen Valley',           category:'Corporate', year:'2022', cover:'images/portfolio/kitchen-valley-1/00.jpg', photos: [...imgs('kitchen-valley-1',7),...imgs('kitchen-valley-2',8)] },
   { id:16, name:'Hecto',                    category:'Corporate', year:'2022', cover:'images/portfolio/hecto/00.jpg',            photos: imgs('hecto',20) },
   { id:17, name:'Dunkin Naju',              category:'Corporate', year:'2022', cover:'images/portfolio/dunkin-naju/00.jpg',      photos: imgs('dunkin-naju',15) },
-  { id:18, name:'Wyout Camping Festival',   category:'Festival',  year:'2022', cover:'images/portfolio/wyout-camping/00.jpg',    photos: imgs('wyout-camping',57) },
+  { id:18, name:'Wyout Camping Festival',   category:'Concert & Festival',  year:'2022', cover:'images/portfolio/wyout-camping/00.jpg',    photos: imgs('wyout-camping',57) },
   { id:19, name:'IMM Family Event',         category:'Corporate', year:'2022', cover:'images/portfolio/imm-family/00.jpg',       photos: imgs('imm-family',15) },
   { id:20, name:'Rich&Co',                  category:'Corporate', year:'2022', cover:'images/portfolio/rich-n-co/00.jpg',        photos: imgs('rich-n-co',51) },
   { id:21, name:'Enver Gallery',            category:'Corporate', year:'2022', cover:'images/portfolio/enver-gallery/00.jpg',    photos: imgs('enver-gallery',52) },
@@ -693,7 +693,7 @@ const PROJECTS = [
   { id:24, name:'Umicore',                  category:'Corporate', year:'2022', cover:'images/portfolio/umicore/00.jpg',          photos: imgs('umicore',88) },
   { id:25, name:'Interior Shoot',           category:'Corporate', year:'2023', cover:'images/portfolio/interior/00.jpg',         photos: imgs('interior',34) },
   { id:26, name:'CMDS',                     category:'Corporate', year:'2025', cover:'images/portfolio/cmds/00.jpg',             photos: imgs('cmds',38) },
-  { id:27, name:'Youngsil N Festival',      category:'Festival',  year:'2025', cover:'images/portfolio/n-festival/00.jpg',       photos: imgs('n-festival',30) },
+  { id:27, name:'Youngsil N Festival',      category:'Concert & Festival',  year:'2025', cover:'images/portfolio/n-festival/00.jpg',       photos: imgs('n-festival',30) },
   { id:28, name:'Youngsil Beyblade II',     category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-2025/00.jpg',    photos: imgs('beyblade-2025',82) },
   { id:29, name:'Hydra Arm',                category:'Corporate', year:'2025', cover:'images/portfolio/hydra-arm/00.jpg',        photos: imgs('hydra-arm',30) },
   { id:30, name:'The K',                    category:'Corporate', year:'2025', cover:'images/portfolio/the-k/00.jpg',            photos: imgs('the-k',68) },
@@ -703,7 +703,7 @@ const PROJECTS = [
   { id:34, name:'Human Intelligence Conf.', category:'Corporate', year:'2026', cover:'images/portfolio/human-intel/00.jpg',      photos: imgs('human-intel',98) }
 ];
 
-const CATS_MAIN = ['all','Corporate','Concert','Festival','지면','앨범','Business Profile','Family','Magazine'];
+const CATS_MAIN = ['all','Corporate','Concert & Festival','Editorial','Album','Business Profile','Family','Magazine'];
 const COLS = ['c6','c6','c6','c6','c6','c6'];
 
 /* ── CURSOR ── */
@@ -752,11 +752,11 @@ loaderTl
 
 /* ── MARQUEE ── */
 const mWords = [
-  'PEPSI','Meritz Financial','IMM Investment','Royal Salute','Youngsil','Varilux','SYLFIRM X',
+  'PEPSI','Meritz Financial','IMM Investment','Royal Salute','Youngsil','EssilorLuxottica','SYLFIRM X',
   'Banyan Tree','KICT','The New Grey','Vendors','Ministry of Employment','Umicore',
   'Kitchen Valley','Dunkin Donuts','CMDS','Lee Dong-wook','Hydra Arm','The K Hotel',
   'LAON Band','Hecto','Rich & Co','Enver Gallery','Mirae DNS','Wyout Festival',
-  'Beethoven Philharmonic','Estevan','GoodRich Show','Human Intelligence','Beyblade'
+  'Beethoven Philharmonic','Esteban','GoodRich Show','Human Intelligence','Beyblade'
 ];
 const mTrack = document.getElementById('mTrack');
 [...mWords,...mWords].forEach(w=>{
