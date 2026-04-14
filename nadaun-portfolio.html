@@ -721,8 +721,8 @@
     .cfield { margin-bottom: 28px; position: relative; }
     .cfield label {
       display: block;
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
       color: var(--mid-gray); margin-bottom: 10px;
     }
     .cfield input, .cfield select, .cfield textarea {
@@ -730,15 +730,15 @@
       background: transparent;
       border: none;
       border-bottom: 1px solid var(--warm-gray);
-      padding: 8px 0 12px;
+      padding: 8px 0 14px;
       font-family: var(--font-body);
-      font-size: 15px; color: var(--black);
+      font-size: 17px; color: var(--black);
       outline: none;
       transition: border-color 0.25s;
       -webkit-appearance: none;
       border-radius: 0;
     }
-    .cfield input::placeholder, .cfield textarea::placeholder { color: #ccc; }
+    .cfield input::placeholder, .cfield textarea::placeholder { color: #bbb; font-size: 15px; }
     .cfield input:focus, .cfield select:focus, .cfield textarea:focus {
       border-bottom-color: var(--black);
     }
@@ -895,7 +895,7 @@ function imgs(folder, count) {
 
 const PROJECTS = [
   /* ── 상단 주요 프로젝트 ── */
-  { id:35, name:'HD Hyundai 신년회',        category:'Corporate', year:'2026', cover:'images/portfolio/hd-hyundai/00.jpg',       photos: imgs('hd-hyundai',48) },
+  { id:35, name:'HD Hyundai',               category:'Corporate', year:'2026', cover:'images/portfolio/hd-hyundai/00.jpg',       photos: imgs('hd-hyundai',48) },
   { id:0,  name:'PEPSI FESTA',              category:'Concert & Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgs('pepsi-festa',80) },
   { id:1,  name:'Meritz Dream Ceremony',    category:'Corporate', year:'2026', cover:'images/portfolio/meritz-dream/00.jpg',     photos: imgs('meritz-dream',37) },
   { id:2,  name:'Hanmaeum Fest',            category:'Concert & Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgs('hanmaeum-fest',60) },
@@ -1338,11 +1338,13 @@ document.addEventListener('DOMContentLoaded', function() {
     result.className = 'cresult';
     result.textContent = '';
 
+    const dateFrom = document.getElementById('cf-date-from').value;
+    const dateTo   = document.getElementById('cf-date-to').value;
     const data = {
       name: document.getElementById('cf-name').value,
       phone: document.getElementById('cf-phone').value,
       shootType: document.getElementById('cf-shoot').value,
-      date: document.getElementById('cf-date').value,
+      date: dateTo ? `${dateFrom} ~ ${dateTo}` : dateFrom,
       message: document.getElementById('cf-message').value,
     };
 
@@ -1378,8 +1380,8 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="cmodal-left">
     <div class="cmodal-left-brand">Project NADAUN Team</div>
     <div>
-      <h2 class="cmodal-left-title">We Capture<br>What Words<br><em>Cannot.</em></h2>
-      <p class="cmodal-left-sub">브랜드의 가장 빛나는 순간을<br>영원한 기록으로 남깁니다.</p>
+      <h2 class="cmodal-left-title">Your Story,<br>Shot At Its<br><em>Finest.</em></h2>
+      <p class="cmodal-left-sub">Every brand has a defining moment.<br>We make sure it's unforgettable.</p>
     </div>
     <div class="cmodal-left-brand" style="color:rgba(255,255,255,0.35)">rbsent.info@gmail.com</div>
     <div class="cmodal-left-deco"></div>
@@ -1391,49 +1393,54 @@ document.addEventListener('DOMContentLoaded', function() {
     <button class="cmodal-close" onclick="closeContact()">✕</button>
     <div class="cmodal-right-inner">
       <div class="cform-eyebrow">Inquiry</div>
-      <h3 class="cform-title">촬영 문의</h3>
+      <h3 class="cform-title">Let's Work Together</h3>
       <form id="contactForm" autocomplete="off">
         <div class="cfield-row">
           <div class="cfield">
-            <label for="cf-name">이름 *</label>
-            <input type="text" id="cf-name" placeholder="홍길동" required>
+            <label for="cf-name">Name *</label>
+            <input type="text" id="cf-name" placeholder="Full name" required>
             <span class="cfield-line"></span>
           </div>
           <div class="cfield">
-            <label for="cf-phone">연락처 *</label>
+            <label for="cf-phone">Phone *</label>
             <input type="tel" id="cf-phone" placeholder="010-0000-0000" required>
             <span class="cfield-line"></span>
           </div>
         </div>
+        <div class="cfield">
+          <label for="cf-shoot">Shoot Type *</label>
+          <select id="cf-shoot" required>
+            <option value="" disabled selected>Select a type</option>
+            <option>Corporate / Event</option>
+            <option>Concert / Performance</option>
+            <option>Festival</option>
+            <option>Product / Commercial</option>
+            <option>Profile / Portrait</option>
+            <option>Wedding / Family</option>
+            <option>Magazine / Editorial</option>
+            <option>Other</option>
+          </select>
+          <span class="cfield-line"></span>
+        </div>
         <div class="cfield-row">
           <div class="cfield">
-            <label for="cf-shoot">촬영 종류 *</label>
-            <select id="cf-shoot" required>
-              <option value="" disabled selected>선택해주세요</option>
-              <option>기업 / 행사 촬영</option>
-              <option>콘서트 / 공연 촬영</option>
-              <option>페스티벌 촬영</option>
-              <option>제품 / 광고 촬영</option>
-              <option>프로필 / 인물 촬영</option>
-              <option>웨딩 / 가족 촬영</option>
-              <option>잡지 / 에디토리얼</option>
-              <option>기타</option>
-            </select>
+            <label for="cf-date-from">Date From *</label>
+            <input type="date" id="cf-date-from" required>
             <span class="cfield-line"></span>
           </div>
           <div class="cfield">
-            <label for="cf-date">희망 날짜 *</label>
-            <input type="date" id="cf-date" required>
+            <label for="cf-date-to">Date To</label>
+            <input type="date" id="cf-date-to">
             <span class="cfield-line"></span>
           </div>
         </div>
         <div class="cfield">
-          <label for="cf-message">자세한 내용</label>
-          <textarea id="cf-message" placeholder="촬영 장소, 인원, 시간 등 자유롭게 적어주세요."></textarea>
+          <label for="cf-message">Details</label>
+          <textarea id="cf-message" placeholder="Location, number of people, duration, or anything else..."></textarea>
           <span class="cfield-line"></span>
         </div>
         <button type="submit" class="csubmit" id="csubmitBtn">
-          <span>문의 보내기</span>
+          <span>Send Inquiry</span>
           <span class="csubmit-arrow">→</span>
         </button>
         <div class="cresult" id="cresult"></div>
