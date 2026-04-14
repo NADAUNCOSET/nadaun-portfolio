@@ -965,7 +965,7 @@
 <!-- PROJECTS -->
 <section class="projects-wrap">
   <div class="grid-header">
-    <span class="grid-count" id="projCount">35 Projects</span>
+    <span class="grid-count" id="projCount">36 Projects</span>
   </div>
   <div class="filters" id="filterWrap"></div>
   <div class="projects-grid" id="pGrid"></div>
@@ -1165,7 +1165,10 @@ const pGrid = document.getElementById('pGrid');
 
 function buildGrid(){
   pGrid.innerHTML='';
-  getFilteredProjects().forEach((proj,i)=>{
+  const filtered = getFilteredProjects();
+  const projCount = document.getElementById('projCount');
+  if(projCount) projCount.textContent = filtered.length + ' Projects';
+  filtered.forEach((proj,i)=>{
     const col = COLS[i % COLS.length];
     const card = document.createElement('div');
     card.className=`pcard ${col}`;
