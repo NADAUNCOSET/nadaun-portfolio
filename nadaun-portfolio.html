@@ -591,38 +591,39 @@
     /* 미리보기 패널 — 기본 숨김, 호버 시 열림 */
     .pv-nav-preview {
       width: 0; overflow: hidden;
-      background: rgba(8,8,8,.92);
-      backdrop-filter: blur(20px);
-      display: flex; flex-direction: column;
+      position: relative;
       transition: width .38s cubic-bezier(0.16,1,0.3,1);
       border: .5px solid rgba(255,255,255,.08);
       border-left: none; border-right: none;
+      flex-shrink: 0;
     }
     .pv-nav-prev .pv-nav-preview { border-left: .5px solid rgba(255,255,255,.08); border-right: none; }
     .pv-nav-next .pv-nav-preview { border-right: .5px solid rgba(255,255,255,.08); border-left: none; }
-    .pv-nav:hover .pv-nav-preview { width: 190px; }
+    .pv-nav:hover .pv-nav-preview { width: clamp(160px, 14vw, 240px); }
 
     .pv-nav-thumb {
-      width: 190px; height: 126px;
-      object-fit: cover; display: block; flex-shrink: 0;
+      width: clamp(160px, 14vw, 240px);
+      height: clamp(107px, 9.3vw, 160px);
+      object-fit: cover; display: block;
     }
+    /* 텍스트 오버레이 — 썸네일 위에 직접 */
     .pv-nav-label {
-      padding: 8px 14px 10px;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 12px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,.78));
       display: flex; flex-direction: column; gap: 2px;
-      flex-shrink: 0;
     }
     .pv-nav-tag {
-      font-family: var(--font-display); font-size: 9px;
+      font-family: var(--font-display); font-size: clamp(8px, 0.6vw, 10px);
       font-weight: 500; letter-spacing: .1em;
       text-transform: uppercase; color: var(--gold);
-      opacity: .8; white-space: nowrap;
+      opacity: .9; white-space: nowrap;
     }
     .pv-nav-name {
-      font-family: var(--font-display); font-size: 12px;
+      font-family: var(--font-display); font-size: clamp(11px, 0.85vw, 14px);
       font-weight: 600; letter-spacing: .02em;
-      color: rgba(255,255,255,.85);
+      color: #fff;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 162px;
     }
 
     /* 모바일: 미리보기 없이 화살표만 */
