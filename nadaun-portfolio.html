@@ -655,7 +655,7 @@
       font-style: italic;
       font-family: var(--font-serif);
       font-weight: 300;
-      color: var(--accent);
+      color: var(--gold);
       font-size: 1.1em;
     }
     .cmodal-left-sub {
@@ -666,7 +666,7 @@
     .cmodal-left-deco {
       position: absolute;
       width: 320px; height: 320px;
-      border: 0.5px solid rgba(255,255,255,0.06);
+      border: 0.5px solid rgba(251,178,0,0.15);
       border-radius: 50%;
       bottom: -80px; right: -80px;
       pointer-events: none;
@@ -674,7 +674,7 @@
     .cmodal-left-deco2 {
       position: absolute;
       width: 200px; height: 200px;
-      border: 0.5px solid rgba(255,255,255,0.04);
+      border: 0.5px solid rgba(251,178,0,0.08);
       border-radius: 50%;
       bottom: -20px; right: -20px;
       pointer-events: none;
@@ -706,7 +706,7 @@
     .cform-eyebrow {
       font-size: 11px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.12em;
-      color: var(--accent); margin-bottom: 12px;
+      color: var(--gold); margin-bottom: 12px;
     }
     .cform-title {
       font-family: var(--font-display);
@@ -743,7 +743,7 @@
     }
     .cfield-line {
       position: absolute; bottom: 0; left: 0;
-      height: 1px; width: 0; background: var(--accent);
+      height: 2px; width: 0; background: var(--gold);
       transition: width 0.35s var(--ease-out-expo);
     }
     .cfield input:focus ~ .cfield-line,
@@ -756,7 +756,7 @@
     .csubmit {
       display: flex; align-items: center; justify-content: space-between;
       width: 100%;
-      background: var(--black); color: #fff;
+      background: var(--gold); color: var(--black);
       border: none;
       padding: 18px 28px;
       font-family: var(--font-display);
@@ -766,7 +766,7 @@
       transition: background 0.25s, transform 0.2s;
       margin-top: 12px;
     }
-    .csubmit:hover { background: var(--accent); transform: translateY(-2px); }
+    .csubmit:hover { background: var(--gold-deep); transform: translateY(-2px); }
     .csubmit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     .csubmit-arrow { font-size: 18px; transition: transform 0.2s; }
     .csubmit:hover .csubmit-arrow { transform: translateX(4px); }
