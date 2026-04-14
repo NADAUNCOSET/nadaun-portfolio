@@ -559,6 +559,104 @@
     @media (max-width: 768px) {
       footer { padding: 48px 20px 28px; }
     }
+
+    /* ── CONTACT MODAL ── */
+    .cmodal-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s var(--ease-smooth);
+      padding: 20px;
+    }
+    .cmodal-overlay.open { opacity: 1; pointer-events: all; }
+    .cmodal {
+      background: var(--off-white);
+      border-radius: 8px;
+      width: 100%; max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(24px);
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+    .cmodal-overlay.open .cmodal { transform: translateY(0); }
+    .cmodal-head {
+      padding: 32px 36px 24px;
+      border-bottom: 0.5px solid var(--warm-gray);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .cmodal-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin: 0;
+    }
+    .cmodal-head p {
+      font-size: 13px; color: var(--mid-gray);
+      margin: 4px 0 0; letter-spacing: 0.01em;
+    }
+    .cmodal-close {
+      background: none; border: none;
+      font-size: 22px; color: var(--mid-gray);
+      cursor: pointer; padding: 0; line-height: 1;
+      transition: color 0.2s;
+      flex-shrink: 0; margin-left: 16px; margin-top: 2px;
+    }
+    .cmodal-close:hover { color: var(--black); }
+    .cmodal-body { padding: 28px 36px 36px; }
+    .cfield { margin-bottom: 20px; }
+    .cfield label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--dark-gray); margin-bottom: 8px;
+    }
+    .cfield input, .cfield select, .cfield textarea {
+      width: 100%; box-sizing: border-box;
+      background: #fff;
+      border: 0.5px solid var(--warm-gray);
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-family: var(--font-body);
+      font-size: 14px; color: var(--black);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .cfield input:focus, .cfield select:focus, .cfield textarea:focus {
+      border-color: var(--black);
+    }
+    .cfield textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+    .cfield-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .csubmit {
+      width: 100%;
+      background: var(--black); color: #fff;
+      border: none; border-radius: 4px;
+      padding: 15px 24px;
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 8px;
+    }
+    .csubmit:hover { background: var(--accent); transform: translateY(-2px); }
+    .csubmit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .cresult {
+      margin-top: 16px; padding: 14px 16px;
+      border-radius: 4px; font-size: 13px;
+      display: none;
+    }
+    .cresult.ok { background: #f0faf0; color: #2d7a2d; display: block; }
+    .cresult.err { background: #fff0f0; color: #c0392b; display: block; }
+    @media (max-width: 480px) {
+      .cmodal-head, .cmodal-body { padding-left: 20px; padding-right: 20px; }
+      .cfield-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -586,7 +684,7 @@
   </a>
   <nav>
     <a href="#">Projects</a>
-    <a href="#" class="nav-contact">Contact</a>
+    <a href="#" class="nav-contact" onclick="openContact(event)">Contact</a>
   </nav>
   <button class="nav-toggle" id="navToggle" aria-label="메뉴">
     <span></span><span></span><span></span>
@@ -596,7 +694,7 @@
 <!-- 모바일 메뉴 -->
 <div class="nav-mobile" id="navMobile">
   <a href="#" onclick="closeMobileNav()">Projects</a>
-  <a href="#" onclick="closeMobileNav()">Contact</a>
+  <a href="#" onclick="closeMobileNav(); openContact(event)">Contact</a>
 </div>
 
 <!-- MARQUEE -->
@@ -649,7 +747,7 @@
     <div class="footer-links">
       <a href="#">Instagram</a>
       <a href="#">Behance</a>
-      <a href="mailto:hello@nadaun.com">Contact</a>
+      <a href="#" onclick="openContact(event)">Contact</a>
     </div>
   </div>
   <p class="footer-copy">© 2025 NADAUN. All rights reserved.</p>
@@ -1075,6 +1173,118 @@ document.getElementById('photoview').addEventListener('contextmenu', e => {
 document.addEventListener('dragstart', e => {
   if (e.target.tagName === 'IMG') e.preventDefault();
 });
+
+
+/* ── CONTACT MODAL ── */
+function openContact(e) {
+  if (e) e.preventDefault();
+  document.getElementById('cmodal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeContact() {
+  document.getElementById('cmodal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('cmodal').classList.contains('open')) closeContact();
+});
+document.getElementById('cmodal').addEventListener('click', e => {
+  if (e.target === document.getElementById('cmodal')) closeContact();
+});
+
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('csubmitBtn');
+  const result = document.getElementById('cresult');
+  btn.disabled = true;
+  btn.textContent = '전송 중...';
+  result.className = 'cresult';
+  result.textContent = '';
+
+  const data = {
+    name: document.getElementById('cf-name').value,
+    phone: document.getElementById('cf-phone').value,
+    shootType: document.getElementById('cf-shoot').value,
+    date: document.getElementById('cf-date').value,
+    message: document.getElementById('cf-message').value,
+  };
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (res.ok) {
+      result.className = 'cresult ok';
+      result.textContent = '문의가 접수되었습니다. 빠르게 연락드리겠습니다.';
+      this.reset();
+    } else {
+      throw new Error(json.error || '오류가 발생했습니다.');
+    }
+  } catch (err) {
+    result.className = 'cresult err';
+    result.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '문의 보내기';
+  }
+});
 </script>
+
+<!-- CONTACT MODAL -->
+<div class="cmodal-overlay" id="cmodal">
+  <div class="cmodal">
+    <div class="cmodal-head">
+      <div>
+        <h2>촬영 문의</h2>
+        <p>내용을 남겨주시면 빠르게 연락드리겠습니다.</p>
+      </div>
+      <button class="cmodal-close" onclick="closeContact()">✕</button>
+    </div>
+    <div class="cmodal-body">
+      <form id="contactForm" autocomplete="off">
+        <div class="cfield-row">
+          <div class="cfield">
+            <label for="cf-name">이름 *</label>
+            <input type="text" id="cf-name" placeholder="홍길동" required>
+          </div>
+          <div class="cfield">
+            <label for="cf-phone">연락처 *</label>
+            <input type="tel" id="cf-phone" placeholder="010-0000-0000" required>
+          </div>
+        </div>
+        <div class="cfield-row">
+          <div class="cfield">
+            <label for="cf-shoot">촬영 종류 *</label>
+            <select id="cf-shoot" required>
+              <option value="" disabled selected>선택해주세요</option>
+              <option>기업/행사 촬영</option>
+              <option>콘서트/공연 촬영</option>
+              <option>페스티벌 촬영</option>
+              <option>제품/광고 촬영</option>
+              <option>프로필/인물 촬영</option>
+              <option>웨딩/가족 촬영</option>
+              <option>잡지/에디토리얼</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div class="cfield">
+            <label for="cf-date">희망 촬영 날짜 *</label>
+            <input type="date" id="cf-date" required>
+          </div>
+        </div>
+        <div class="cfield">
+          <label for="cf-message">자세한 내용</label>
+          <textarea id="cf-message" placeholder="촬영 장소, 인원, 시간 등 자세한 내용을 적어주세요."></textarea>
+        </div>
+        <button type="submit" class="csubmit" id="csubmitBtn">문의 보내기</button>
+        <div class="cresult" id="cresult"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
