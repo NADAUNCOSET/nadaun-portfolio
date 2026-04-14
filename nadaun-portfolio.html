@@ -1420,8 +1420,12 @@ function openLightbox(projId, idx) {
     } else {
       scroll.scrollTop = 0;
     }
-    // 첫 이미지 렌더 완료 후 스크롤 시작 (레이아웃 안정화)
-    setTimeout(pvStartAutoScroll, 120);
+    // 첫 4장이 실제 로드된 후 스크롤 시작 — 이미지 로드 전 레이아웃 reflow로 인한 덜컹거림 방지
+    const imgs = Array.from(scroll.querySelectorAll('img')).slice(0, 4);
+    Promise.all(imgs.map(img =>
+      img.complete ? Promise.resolve() :
+      new Promise(r => { img.onload = r; img.onerror = r; })
+    )).then(() => setTimeout(pvStartAutoScroll, 60));
   });
 }
 
