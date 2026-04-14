@@ -525,7 +525,11 @@
       overflow-y: auto; overflow-x: hidden;
       padding-top: 52px;
       scrollbar-width: none;
+      will-change: scroll-position;
+      contain: paint;
+      transition: opacity 0.28s ease;
     }
+    .pv-scroll.pv-fading { opacity: 0; }
     .pv-scroll::-webkit-scrollbar { display: none; }
 
     /* 커스텀 사이드 스크러버 */
@@ -576,6 +580,7 @@
       break-inside: avoid;
       margin-bottom: 3px;
       line-height: 0;
+      contain: layout paint;
     }
     .pv-img-wrap img {
       display: block;
@@ -583,6 +588,7 @@
       user-select: none;
       -webkit-user-drag: none;
       pointer-events: none;
+      will-change: auto;
     }
     .pv-img-shield {
       position: absolute;
@@ -933,46 +939,59 @@ gsap.registerPlugin(ScrollTrigger);
 function imgs(folder, count) {
   return Array.from({length: count}, (_,i) => `images/portfolio/${folder}/${String(i).padStart(2,'0')}.jpg`);
 }
+// 사진 다양성 — 시작/중간/끝을 교차 배치해 스크롤 초반부터 다양한 장면 노출
+function imgsSpread(folder, count) {
+  const third = Math.floor(count / 3);
+  const order = [];
+  for (let i = 0; i < third; i++) {
+    order.push(i);               // 앞부분
+    order.push(i + third);       // 중간부분
+    order.push(i + third * 2);   // 뒷부분
+  }
+  // 나머지 (3으로 나누어 떨어지지 않는 경우)
+  for (let i = third * 3; i < count; i++) order.push(i);
+  return order.map(i => `images/portfolio/${folder}/${String(i).padStart(2,'0')}.jpg`);
+}
 
 const PROJECTS = [
   /* ── 상단 주요 프로젝트 ── */
   { id:35, name:'HD Hyundai',               category:'Corporate', year:'2026', cover:'images/portfolio/hd-hyundai/00.jpg',       photos: imgs('hd-hyundai',48) },
-  { id:0,  name:'PEPSI FESTA',              category:'Concert & Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgs('pepsi-festa',80) },
+  { id:0,  name:'PEPSI FESTA',              category:'Concert & Festival',  year:'2024', cover:'images/portfolio/pepsi-festa/00.jpg',      photos: imgsSpread('pepsi-festa',80) },
   { id:1,  name:'Meritz Dream Ceremony',    category:'Corporate', year:'2026', cover:'images/portfolio/meritz-dream/00.jpg',     photos: imgs('meritz-dream',37) },
-  { id:2,  name:'Hanmaeum Fest',            category:'Concert & Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgs('hanmaeum-fest',60) },
-  { id:3,  name:'IMM Year-End',             category:'Corporate', year:'2022', cover:'images/portfolio/imm-yearend/00.jpg',      photos: imgs('imm-yearend',125) },
-  { id:4,  name:'Royal Salute',             category:'Corporate', year:'2023', cover:'images/portfolio/royal-salute/00.jpg',     photos: imgs('royal-salute',60) },
-  { id:5,  name:'Promised Play Festival',   category:'Concert & Festival',  year:'2023', cover:'images/portfolio/play-festival/00.jpg',    photos: imgs('play-festival',99) },
-  { id:6,  name:'Youngsil Beyblade',        category:'Corporate', year:'2024', cover:'images/portfolio/beyblade-2024/00.jpg',    photos: imgs('beyblade-2024',146) },
-  { id:7,  name:'EssilorLuxottica Seoul',    category:'Corporate', year:'2025', cover:'images/portfolio/varilux-seoul/00.jpg',    photos: imgs('varilux-seoul',96) },
-  { id:8,  name:'EssilorLuxottica Busan',   category:'Corporate', year:'2025', cover:'images/portfolio/varilux-busan/00.jpg',    photos: imgs('varilux-busan',137) },
-  { id:9,  name:'Sylfirm X',                 category:'Corporate', year:'2025', cover:'images/portfolio/sylfirm/00.jpg',          photos: imgs('sylfirm',169) },
-  { id:10, name:'Banyan Tree CAT',          category:'Corporate', year:'2025', cover:'images/portfolio/banyan-tree/00.jpg',      photos: imgs('banyan-tree',101) },
-  { id:11, name:'Beyblade',                 category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-aug/00.jpg',     photos: imgs('beyblade-aug',173) },
+  { id:2,  name:'Hanmaeum Fest',            category:'Concert & Festival',  year:'2026', cover:'images/portfolio/hanmaeum-fest/00.jpg',    photos: imgsSpread('hanmaeum-fest',60) },
+  { id:3,  name:'IMM Year-End',             category:'Corporate', year:'2022', cover:'images/portfolio/imm-yearend/00.jpg',      photos: imgsSpread('imm-yearend',125) },
+  { id:4,  name:'Royal Salute',             category:'Corporate', year:'2023', cover:'images/portfolio/royal-salute/00.jpg',     photos: imgsSpread('royal-salute',60) },
+  { id:5,  name:'Promised Play Festival',   category:'Concert & Festival',  year:'2023', cover:'images/portfolio/play-festival/00.jpg',    photos: imgsSpread('play-festival',99) },
+  { id:6,  name:'Youngsil Beyblade',        category:'Corporate', year:'2024', cover:'images/portfolio/beyblade-2024/00.jpg',    photos: imgsSpread('beyblade-2024',146) },
+  { id:7,  name:'EssilorLuxottica Seoul',    category:'Corporate', year:'2025', cover:'images/portfolio/varilux-seoul/00.jpg',    photos: imgsSpread('varilux-seoul',96) },
+  { id:8,  name:'EssilorLuxottica Busan',   category:'Corporate', year:'2025', cover:'images/portfolio/varilux-busan/00.jpg',    photos: imgsSpread('varilux-busan',137) },
+  { id:9,  name:'Sylfirm X',                 category:'Corporate', year:'2025', cover:'images/portfolio/sylfirm/00.jpg',          photos: imgsSpread('sylfirm',169) },
+  { id:10, name:'Banyan Tree CAT',          category:'Corporate', year:'2025', cover:'images/portfolio/banyan-tree/00.jpg',      photos: imgsSpread('banyan-tree',101) },
+  { id:11, name:'Beyblade',                 category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-aug/00.jpg',     photos: imgsSpread('beyblade-aug',173) },
   /* ── 이하 일반 ── */
   { id:12, name:'Beethoven Concert',        category:'Concert & Festival',   year:'2022', cover:'images/portfolio/beethoven/00.jpg',       photos: imgs('beethoven',32) },
   { id:13, name:'Esteban',                  category:'Concert & Festival',   year:'2022', cover:'images/portfolio/estevan/00.jpg',          photos: imgs('estevan',29) },
-  { id:14, name:'JAY B CONCERT SKETCH',     category:'Concert & Festival',   year:'2022', cover:'images/portfolio/jb-sketch/00.jpg',        photos: imgs('jb-sketch',56) },
+  { id:14, name:'JAY B CONCERT SKETCH',     category:'Concert & Festival',   year:'2022', cover:'images/portfolio/jb-sketch/00.jpg',        photos: imgsSpread('jb-sketch',56) },
   { id:15, name:'Kitchen Valley',           category:'Corporate', year:'2022', cover:'images/portfolio/kitchen-valley-1/00.jpg', photos: [...imgs('kitchen-valley-1',7),...imgs('kitchen-valley-2',8)] },
   { id:16, name:'Hecto',                    category:'Corporate', year:'2022', cover:'images/portfolio/hecto/00.jpg',            photos: imgs('hecto',20) },
   { id:17, name:'Dunkin Naju',              category:'Corporate', year:'2022', cover:'images/portfolio/dunkin-naju/00.jpg',      photos: imgs('dunkin-naju',15) },
-  { id:18, name:'Wyout Camping Festival',   category:'Concert & Festival',  year:'2022', cover:'images/portfolio/wyout-camping/00.jpg',    photos: imgs('wyout-camping',57) },
+  { id:18, name:'Wyout Camping Festival',   category:'Concert & Festival',  year:'2022', cover:'images/portfolio/wyout-camping/00.jpg',    photos: imgsSpread('wyout-camping',57) },
   { id:19, name:'IMM Family Event',         category:'Corporate', year:'2022', cover:'images/portfolio/imm-family/00.jpg',       photos: imgs('imm-family',15) },
-  { id:20, name:'Rich & Co.',                  category:'Corporate', year:'2022', cover:'images/portfolio/rich-n-co/00.jpg',        photos: imgs('rich-n-co',51) },
+  { id:20, name:'Rich & Co.',               category:'Corporate', year:'2022', cover:'images/portfolio/rich-n-co/00.jpg',        photos: imgs('rich-n-co',51) },
   { id:21, name:'Enver Gallery',            category:'Corporate', year:'2022', cover:'images/portfolio/enver-gallery/00.jpg',    photos: imgs('enver-gallery',52) },
-  { id:22, name:'Mirae DNS',                category:'Corporate', year:'2022', cover:'images/portfolio/mirae-dns/00.jpg',        photos: imgs('mirae-dns',63) },
-  { id:23, name:'Ministry of Employment and Labor',   category:'Corporate', year:'2022', cover:'images/portfolio/moel/00.jpg',             photos: imgs('moel',67) },
-  { id:24, name:'Umicore',                  category:'Corporate', year:'2022', cover:'images/portfolio/umicore/00.jpg',          photos: imgs('umicore',88) },
+  { id:22, name:'Mirae DNS',                category:'Corporate', year:'2022', cover:'images/portfolio/mirae-dns/00.jpg',        photos: imgsSpread('mirae-dns',63) },
+  { id:23, name:'Ministry of Employment and Labor', category:'Corporate', year:'2022', cover:'images/portfolio/moel/00.jpg',    photos: imgsSpread('moel',67) },
+  { id:24, name:'Umicore',                  category:'Corporate', year:'2022', cover:'images/portfolio/umicore/00.jpg',          photos: imgsSpread('umicore',88) },
   { id:25, name:'Interior Shoot',           category:'Corporate', year:'2023', cover:'images/portfolio/interior/00.jpg',         photos: imgs('interior',34) },
   { id:26, name:'CMDS',                     category:'Corporate', year:'2025', cover:'images/portfolio/cmds/00.jpg',             photos: imgs('cmds',38) },
   { id:27, name:'Youngsil N Festival',      category:'Concert & Festival',  year:'2025', cover:'images/portfolio/n-festival/00.jpg',       photos: imgs('n-festival',30) },
-  { id:28, name:'Youngsil Beyblade II',     category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-2025/00.jpg',    photos: imgs('beyblade-2025',82) },
+  { id:28, name:'Youngsil Beyblade II',     category:'Corporate', year:'2025', cover:'images/portfolio/beyblade-2025/00.jpg',    photos: imgsSpread('beyblade-2025',82) },
   { id:29, name:'Hydra Arm',                category:'Corporate', year:'2025', cover:'images/portfolio/hydra-arm/00.jpg',        photos: imgs('hydra-arm',30) },
-  { id:30, name:'The K',                    category:'Corporate', year:'2025', cover:'images/portfolio/the-k/00.jpg',            photos: imgs('the-k',68) },
-  { id:31, name:'KICT',                     category:'Corporate', year:'2025', cover:'images/portfolio/kict/00.jpg',             photos: imgs('kict',96) },
-  { id:32, name:'THE NEW GREY',             category:'Corporate', year:'2025', cover:'images/portfolio/thenewgrey/00.jpg',       photos: imgs('thenewgrey',105) },
-  { id:33, name:'VENDORS',                  category:'Corporate', year:'2025', cover:'images/portfolio/vendors/00.jpg',          photos: imgs('vendors',67) },
-  { id:34, name:'Human Intelligence Conf.', category:'Corporate', year:'2026', cover:'images/portfolio/human-intel/00.jpg',      photos: imgs('human-intel',98) }
+  { id:30, name:'The K',                    category:'Corporate', year:'2025', cover:'images/portfolio/the-k/00.jpg',            photos: imgsSpread('the-k',68) },
+  { id:31, name:'KICT',                     category:'Corporate', year:'2025', cover:'images/portfolio/kict/00.jpg',             photos: imgsSpread('kict',96) },
+  { id:32, name:'THE NEW GREY',             category:'Corporate', year:'2025', cover:'images/portfolio/thenewgrey/00.jpg',       photos: imgsSpread('thenewgrey',105) },
+  { id:33, name:'VENDORS',                  category:'Corporate', year:'2025', cover:'images/portfolio/vendors/00.jpg',          photos: imgsSpread('vendors',67) },
+  { id:34, name:'Human Intelligence Conf.', category:'Corporate', year:'2026', cover:'images/portfolio/human-intel/00.jpg',      photos: imgsSpread('human-intel',98) }
 ];
 
 const CATS_MAIN = ['all','Corporate','Concert & Festival','Editorial','Album','Business Profile','Family','Magazine'];
@@ -1188,14 +1207,28 @@ let pvProj = null;
 let pvAutoRaf = null;
 let pvUserScrollTimer = null;
 let pvNextTimer = null;
-const PV_SPEED = 4.0; // px per frame
+const PV_SPEED = 2.0; // px per frame — 부드러운 속도
 
 function pvNextProject() {
-  // 현재 필터 기준으로 보이는 프로젝트 목록에서 다음으로 이동
+  pvStopAutoScroll();
+  clearTimeout(pvNextTimer);
   const visible = getFilteredProjects();
   const curIdx = visible.findIndex(p => p.id === pvProj.id);
   const nextProj = visible[(curIdx + 1) % visible.length];
-  if (nextProj) openLightbox(nextProj.id, 0);
+  if (!nextProj) return;
+
+  const scroll = document.getElementById('pvScroll');
+  // 1) 페이드 아웃
+  scroll.classList.add('pv-fading');
+  pvNextTimer = setTimeout(() => {
+    // 2) DOM 교체 (fade된 상태에서)
+    scroll.dataset.projId = '-1'; // force rebuild
+    openLightbox(nextProj.id, 0);
+    // 3) 페이드 인 (rAF 이후 — paint 완료 후)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => scroll.classList.remove('pv-fading'));
+    });
+  }, 280);
 }
 
 function pvStartAutoScroll() {
@@ -1204,11 +1237,9 @@ function pvStartAutoScroll() {
   const scroll = document.getElementById('pvScroll');
   function step() {
     const maxScroll = scroll.scrollHeight - scroll.clientHeight;
-    // 이미지 아직 로딩 중(maxScroll이 작음)이면 멈추지 않고 계속 진행
     if (maxScroll > 50 && scroll.scrollTop >= maxScroll - 2) {
       pvStopAutoScroll();
-      // 1.5초 후 다음 프로젝트로 자동 전환
-      pvNextTimer = setTimeout(pvNextProject, 1500);
+      pvNextTimer = setTimeout(pvNextProject, 1200);
       return;
     }
     scroll.scrollTop += PV_SPEED;
@@ -1266,7 +1297,8 @@ function openLightbox(projId, idx) {
     } else {
       scroll.scrollTop = 0;
     }
-    pvStartAutoScroll();
+    // 첫 이미지 렌더 완료 후 스크롤 시작 (레이아웃 안정화)
+    setTimeout(pvStartAutoScroll, 120);
   });
 }
 
