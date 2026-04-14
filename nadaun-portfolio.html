@@ -553,6 +553,84 @@
     }
     .pv-scrubber:hover .pv-scrub-thumb { width: 8px; background: #ffd04d; }
 
+    /* ── 프로젝트 이전/다음 네비게이션 ── */
+    .pv-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 620; background: none; border: none;
+      cursor: pointer; display: flex; align-items: stretch;
+      padding: 0; gap: 0; pointer-events: all;
+    }
+    .pv-nav-prev { left: 0; flex-direction: row; }
+    .pv-nav-next { right: 0; flex-direction: row-reverse; }
+
+    /* 화살표 탭 */
+    .pv-nav-arrow {
+      width: 40px; min-height: 80px;
+      background: rgba(10,10,10,.72);
+      backdrop-filter: blur(12px);
+      border: .5px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.45); font-size: 18px;
+      transition: background .2s, color .2s, border-color .2s;
+      flex-shrink: 0;
+    }
+    .pv-nav-prev .pv-nav-arrow {
+      border-radius: 0 6px 6px 0;
+      border-left: none;
+    }
+    .pv-nav-next .pv-nav-arrow {
+      border-radius: 6px 0 0 6px;
+      border-right: none;
+    }
+    .pv-nav:hover .pv-nav-arrow {
+      background: rgba(251,178,0,.18);
+      color: var(--gold);
+      border-color: rgba(251,178,0,.25);
+    }
+
+    /* 미리보기 패널 — 기본 숨김, 호버 시 열림 */
+    .pv-nav-preview {
+      width: 0; overflow: hidden;
+      background: rgba(8,8,8,.92);
+      backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
+      transition: width .38s cubic-bezier(0.16,1,0.3,1);
+      border: .5px solid rgba(255,255,255,.08);
+      border-left: none; border-right: none;
+    }
+    .pv-nav-prev .pv-nav-preview { border-left: .5px solid rgba(255,255,255,.08); border-right: none; }
+    .pv-nav-next .pv-nav-preview { border-right: .5px solid rgba(255,255,255,.08); border-left: none; }
+    .pv-nav:hover .pv-nav-preview { width: 190px; }
+
+    .pv-nav-thumb {
+      width: 190px; height: 126px;
+      object-fit: cover; display: block; flex-shrink: 0;
+    }
+    .pv-nav-label {
+      padding: 8px 14px 10px;
+      display: flex; flex-direction: column; gap: 2px;
+      flex-shrink: 0;
+    }
+    .pv-nav-tag {
+      font-family: var(--font-display); font-size: 9px;
+      font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--gold);
+      opacity: .8; white-space: nowrap;
+    }
+    .pv-nav-name {
+      font-family: var(--font-display); font-size: 12px;
+      font-weight: 600; letter-spacing: .02em;
+      color: rgba(255,255,255,.85);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 162px;
+    }
+
+    /* 모바일: 미리보기 없이 화살표만 */
+    @media (max-width: 768px) {
+      .pv-nav:hover .pv-nav-preview { width: 0; }
+      .pv-nav-arrow { width: 36px; min-height: 64px; font-size: 16px; }
+    }
+
     /* Masonry — 검은 공간 없이 자연스럽게 채움 */
     .pv-grid {
       column-count: 2;
@@ -916,6 +994,27 @@
       <div class="pv-scrub-thumb" id="pvThumb"></div>
     </div>
   </div>
+  <!-- 이전/다음 프로젝트 네비게이션 -->
+  <button class="pv-nav pv-nav-prev" id="pvNavPrev" aria-label="이전 프로젝트">
+    <div class="pv-nav-arrow">&#8592;</div>
+    <div class="pv-nav-preview">
+      <img class="pv-nav-thumb" id="pvNavPrevThumb" src="" alt="">
+      <div class="pv-nav-label">
+        <span class="pv-nav-tag">PREV PROJECT</span>
+        <span class="pv-nav-name" id="pvNavPrevName"></span>
+      </div>
+    </div>
+  </button>
+  <button class="pv-nav pv-nav-next" id="pvNavNext" aria-label="다음 프로젝트">
+    <div class="pv-nav-preview">
+      <img class="pv-nav-thumb" id="pvNavNextThumb" src="" alt="">
+      <div class="pv-nav-label">
+        <span class="pv-nav-tag">NEXT PROJECT</span>
+        <span class="pv-nav-name" id="pvNavNextName"></span>
+      </div>
+    </div>
+    <div class="pv-nav-arrow">&#8594;</div>
+  </button>
 </div>
 
 <!-- FOOTER -->
@@ -1212,26 +1311,46 @@ let pvUserScrollTimer = null;
 let pvNextTimer = null;
 const PV_SPEED = 2.0; // px per frame — 부드러운 속도
 
-function pvNextProject() {
+function pvSwitchProject(targetProj) {
+  if (!targetProj) return;
   pvStopAutoScroll();
   clearTimeout(pvNextTimer);
-  const visible = getFilteredProjects();
-  const curIdx = visible.findIndex(p => p.id === pvProj.id);
-  const nextProj = visible[(curIdx + 1) % visible.length];
-  if (!nextProj) return;
-
   const scroll = document.getElementById('pvScroll');
-  // 1) 페이드 아웃
   scroll.classList.add('pv-fading');
   pvNextTimer = setTimeout(() => {
-    // 2) DOM 교체 (fade된 상태에서)
-    scroll.dataset.projId = '-1'; // force rebuild
-    openLightbox(nextProj.id, 0);
-    // 3) 페이드 인 (rAF 이후 — paint 완료 후)
+    scroll.dataset.projId = '-1';
+    openLightbox(targetProj.id, 0);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => scroll.classList.remove('pv-fading'));
     });
   }, 280);
+}
+
+function pvNextProject() {
+  const visible = getFilteredProjects();
+  const curIdx = visible.findIndex(p => p.id === pvProj.id);
+  pvSwitchProject(visible[(curIdx + 1) % visible.length]);
+}
+
+function pvPrevProject() {
+  const visible = getFilteredProjects();
+  const curIdx = visible.findIndex(p => p.id === pvProj.id);
+  pvSwitchProject(visible[(curIdx - 1 + visible.length) % visible.length]);
+}
+
+function pvUpdateNavPreviews() {
+  const visible = getFilteredProjects();
+  const curIdx = visible.findIndex(p => p.id === pvProj.id);
+  const prev = visible[(curIdx - 1 + visible.length) % visible.length];
+  const next = visible[(curIdx + 1) % visible.length];
+  if (prev) {
+    document.getElementById('pvNavPrevThumb').src = prev.cover;
+    document.getElementById('pvNavPrevName').textContent = prev.name;
+  }
+  if (next) {
+    document.getElementById('pvNavNextThumb').src = next.cover;
+    document.getElementById('pvNavNextName').textContent = next.name;
+  }
 }
 
 function pvStartAutoScroll() {
@@ -1291,6 +1410,7 @@ function openLightbox(projId, idx) {
   document.getElementById('pvMeta').textContent =
     `${pvProj.name}  ·  ${pvProj.photos.length} Photos`;
   document.getElementById('photoview').classList.add('open');
+  pvUpdateNavPreviews();
   document.body.style.overflow = 'hidden';
 
   requestAnimationFrame(() => {
@@ -1316,6 +1436,17 @@ function closeLightbox() {
 // 마우스 휠로 조작하면 오토스크롤 2초 일시정지 후 재개
 document.getElementById('pvScroll').addEventListener('wheel', pvPauseAndResume, { passive: true });
 document.getElementById('pvScroll').addEventListener('touchmove', pvPauseAndResume, { passive: true });
+
+// 이전/다음 버튼
+document.getElementById('pvNavPrev').addEventListener('click', pvPrevProject);
+document.getElementById('pvNavNext').addEventListener('click', pvNextProject);
+
+// 키보드 ← → 로 프로젝트 전환
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('photoview').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft')  pvPrevProject();
+  if (e.key === 'ArrowRight') pvNextProject();
+});
 
 /* ── 사이드 스크러버 ── */
 (function() {
@@ -1421,6 +1552,7 @@ document.addEventListener('DOMContentLoaded', function() {
       name: document.getElementById('cf-name').value,
       phone: document.getElementById('cf-phone').value,
       shootType: document.getElementById('cf-shoot').value,
+      photographers: document.getElementById('cf-photographers').value || '-',
       date: dateTo ? `${dateFrom} ~ ${dateTo}` : dateFrom,
       message: document.getElementById('cf-message').value,
     };
@@ -1516,6 +1648,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="date" id="cf-date-to">
             <span class="cfield-line"></span>
           </div>
+        </div>
+        <div class="cfield">
+          <label for="cf-photographers">Photographers Needed</label>
+          <select id="cf-photographers">
+            <option value="" disabled selected>How many photographers?</option>
+            <option value="1">1 Photographer</option>
+            <option value="2">2 Photographers</option>
+            <option value="3">3 Photographers</option>
+            <option value="4+">4+ Photographers</option>
+            <option value="Discuss">To be discussed</option>
+          </select>
+          <span class="cfield-line"></span>
         </div>
         <div class="cfield">
           <label for="cf-message">Details</label>

@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, phone, shootType, date, message } = req.body;
+  const { name, phone, shootType, date, photographers, message } = req.body;
 
   if (!name || !phone || !shootType || !date) {
     return res.status(400).json({ error: '필수 항목을 입력해주세요.' });
@@ -34,6 +34,7 @@ export default async function handler(req, res) {
         <tr><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">연락처</td><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; font-size: 15px; color: #1a1a1a; font-weight: 500;">${phone}</td></tr>
         <tr><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">촬영 종류</td><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; font-size: 15px; color: #1a1a1a; font-weight: 500;">${shootType}</td></tr>
         <tr><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">희망 날짜</td><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; font-size: 15px; color: #1a1a1a; font-weight: 500;">${date}</td></tr>
+        <tr><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">포토그래퍼</td><td style="padding: 12px 0; border-bottom: 0.5px solid #e8e6e1; font-size: 15px; color: #1a1a1a; font-weight: 500;">${photographers || '-'}</td></tr>
         <tr><td style="padding: 12px 0; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; vertical-align: top;">내용</td><td style="padding: 12px 0; font-size: 15px; color: #1a1a1a; line-height: 1.7;">${(message || '-').replace(/\n/g, '<br>')}</td></tr>
       </table>
       <div style="margin-top: 32px;">
