@@ -313,7 +313,7 @@
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
+      gap: 0;
     }
     .pcard {
       position: relative; border-radius: 3px;
@@ -438,10 +438,10 @@
     /* Photo grid inside gallery */
     .gallery-grid {
       flex: 1; overflow-y: auto; overflow-x: hidden;
-      padding: 72px 6px 6px;
+      padding: 72px 0 0;
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 4px;
+      gap: 0;
       align-content: start;
       scrollbar-width: thin;
       scrollbar-color: var(--dim-gray) transparent;
@@ -635,8 +635,8 @@
     /* Masonry — 검은 공간 없이 자연스럽게 채움 */
     .pv-grid {
       column-count: 2;
-      column-gap: 3px;
-      padding: 3px;
+      column-gap: 0;
+      padding: 0;
     }
     @media (min-width: 2000px)  { .pv-grid { column-count: 3; } }
     @media (min-width: 3000px)  { .pv-grid { column-count: 4; } }
@@ -657,7 +657,7 @@
       position: relative;
       display: block;
       break-inside: avoid;
-      margin-bottom: 3px;
+      margin-bottom: 0;
       line-height: 0;
       contain: layout paint;
     }
