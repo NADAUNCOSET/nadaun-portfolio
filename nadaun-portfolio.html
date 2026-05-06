@@ -1187,7 +1187,7 @@ function buildGrid(){
     addHover(card);
 
     // 카드 등장 애니메이션
-    gsap.from(card, { opacity:0, y:28, duration:.65, ease:'power3.out', delay: i*0.1 });
+    gsap.from(card, { opacity:0, y:20, duration:.5, ease:'power3.out', delay: Math.min(i*0.03, 0.5) });
 
     card.addEventListener('click',()=>openLightbox(proj.id, 0));
   });
