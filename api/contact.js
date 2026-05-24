@@ -9,11 +9,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '필수 항목을 입력해주세요.' });
   }
 
-  // Google Calendar 링크 생성 — 종료일은 +1일 (종일 이벤트)
+  // Google Calendar 링크 생성 — 날짜 범위("2026-04-19 ~ 2026-04-20") 대응
   const eventTitle = encodeURIComponent(`[NADAUN] ${shootType} — ${name}`);
   const eventDetails = encodeURIComponent(`고객명: ${name}\n연락처: ${phone}\n촬영 종류: ${shootType}\n내용: ${message || '-'}`);
-  const startDate = new Date(date);
-  const endDate = new Date(date);
+  const dateParts = date.includes('~') ? date.split('~').map(d => d.trim()) : [date, date];
+  const startDate = new Date(dateParts[0]);
+  const endDate = new Date(dateParts[dateParts.length - 1]);
   endDate.setDate(endDate.getDate() + 1);
   const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
   const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${fmt(startDate)}/${fmt(endDate)}&details=${eventDetails}`;
