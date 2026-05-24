@@ -10,6 +10,9 @@
   <meta name="author" content="NADAUN">
   <link rel="canonical" href="https://nadaun-portfolio.vercel.app/nadaun-portfolio.html">
 
+  <!-- LCP preload: 첫 카드 커버 이미지 (OG와 동일) -->
+  <link rel="preload" as="image" type="image/webp" href="images/portfolio/pepsi-festa/00.webp" fetchpriority="high">
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="NADAUN 나다운 | 행사 · 기업 · 콘서트 B2B 전문 비주얼 제작팀">
@@ -1149,6 +1152,8 @@ function buildGrid(animate){
       img.src = proj.cover;
       img.alt = 'NADAUN 나다운 ' + proj.category + ' 촬영 - ' + proj.name;
       img.loading = i < 2 ? 'eager' : 'lazy';
+      img.decoding = 'async';
+      if (i < 2) img.fetchPriority = 'high';
 
       const info = document.createElement('div'); info.className = 'pcard-info';
       const cat  = document.createElement('div'); cat.className  = 'pcard-cat';  cat.textContent = proj.category;
@@ -1271,7 +1276,7 @@ function openGallery(id){
   activeProj.photos.forEach((src,i)=>{
     const div=document.createElement('div');
     div.className='gphoto'; div.dataset.idx=i;
-    div.innerHTML=`<img src="${src}" alt="NADAUN 나다운 촬영 포트폴리오 사진" loading="lazy"><span class="gphoto-num">${String(i+1).padStart(2,'0')}</span>`;
+    div.innerHTML=`<img src="${src}" alt="NADAUN 나다운 촬영 포트폴리오 사진" loading="lazy" decoding="async"><span class="gphoto-num">${String(i+1).padStart(2,'0')}</span>`;
     addHover(div);
     div.addEventListener('click',()=>openLightbox(id,i));
     grid.appendChild(div);
@@ -1388,6 +1393,7 @@ function openLightbox(projId, idx) {
       img.src = src;
       img.alt = '';
       img.loading = i < 6 ? 'eager' : 'lazy';
+      img.decoding = 'async';
       const shield = document.createElement('div');
       shield.className = 'pv-img-shield';
       wrap.appendChild(img);
