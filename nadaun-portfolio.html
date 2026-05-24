@@ -479,6 +479,20 @@
     }
     #photoview.open { opacity: 1; pointer-events: all; }
 
+    /* ─── 워터마크 (lightbox 열렸을 때만 표시) ─── */
+    .pv-wm { position: fixed; pointer-events: none; z-index: 9999; display: none; }
+    .pv-wm img { height: 4vh; max-height: 50px; opacity: 0.5;
+                 filter: brightness(0) invert(1); pointer-events: none;
+                 -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
+    body.pv-on .pv-wm { display: block; }
+    .pv-wm-tr     { top: 60px; right: 2vw; }
+    .pv-wm-br     { bottom: 3vh; right: 2vw; }
+    .pv-wm-bl     { bottom: 3vh; left: 2vw; }
+    .pv-wm-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .pv-wm-center img { height: 18vh; max-height: 220px; opacity: 0.08; }
+    .pv-wm-roam   { transition: top 2s ease, left 2s ease; }
+    .pv-wm-roam img { opacity: 0.4; }
+
     .pv-header {
       position: fixed; top: 0; left: 0; right: 0; height: 52px;
       display: flex; align-items: center; justify-content: space-between;
@@ -1379,6 +1393,7 @@ function pvPauseAndResume() {
 function openLightbox(projId, idx) {
   pvProj = PROJECTS.find(p => p.id === projId);
   const scroll = document.getElementById('pvScroll');
+  pvStartWm();
 
   if (scroll.dataset.projId !== String(projId)) {
     scroll.innerHTML = '';
@@ -1430,7 +1445,28 @@ function closeLightbox() {
   clearTimeout(pvUserScrollTimer);
   clearTimeout(pvNextTimer);
   document.getElementById('photoview').classList.remove('open');
+  document.body.classList.remove('pv-on');
+  pvStopWm();
   document.body.style.overflow = '';
+}
+
+// ─── 워터마크 roam (lightbox 열렸을 때만 동작) ───
+let pvWmRoamTimer = null;
+function pvMoveWm() {
+  const wm = document.getElementById('pvWmRoam');
+  if (!wm) return;
+  wm.style.top  = (Math.random()*70 + 10) + 'vh';
+  wm.style.left = (Math.random()*70 + 10) + 'vw';
+}
+function pvStartWm() {
+  document.body.classList.add('pv-on');
+  pvMoveWm();
+  clearInterval(pvWmRoamTimer);
+  pvWmRoamTimer = setInterval(pvMoveWm, 8000);
+}
+function pvStopWm() {
+  clearInterval(pvWmRoamTimer);
+  pvWmRoamTimer = null;
 }
 
 // 마우스 휠로 조작하면 오토스크롤 2초 일시정지 후 재개
@@ -1676,6 +1712,13 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
 </div>
+
+<!-- ─── 워터마크 (lightbox 활성 시 body.pv-on으로 표시) ─── -->
+<div class="pv-wm pv-wm-tr"><img src="images/nadaun_logo.png" alt=""></div>
+<div class="pv-wm pv-wm-br"><img src="images/nadaun_logo.png" alt=""></div>
+<div class="pv-wm pv-wm-bl"><img src="images/nadaun_logo.png" alt=""></div>
+<div class="pv-wm pv-wm-center"><img src="images/nadaun_logo.png" alt=""></div>
+<div class="pv-wm pv-wm-roam" id="pvWmRoam" style="top:30vh;left:20vw;"><img src="images/nadaun_logo.png" alt=""></div>
 
 </body>
 </html>
