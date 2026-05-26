@@ -3,6 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 2026-05-26: 강력 캐시 무효화 — 매 수정 즉시 반영 (브라우저 캐시 사고 차단) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- 2026-05-26: Vercel CDN 미리 연결 (LCP 가속) -->
+  <link rel="preconnect" href="https://nadaun-portfolio.vercel.app" crossorigin>
+  <link rel="dns-prefetch" href="https://nadaun-portfolio.vercel.app">
+
+  <script>
+    // 2026-05-26: 코드 버전 미스매치 시 1회 hard reload (캐시 우회)
+    (function(){
+      const VERSION = '2026-05-26-v1';   // commit 단위로 갱신
+      const stored = sessionStorage.getItem('photo_ver');
+      if (stored && stored !== VERSION) {
+        sessionStorage.setItem('photo_ver', VERSION);
+        location.replace(location.pathname + '?v=' + Date.now());
+      } else {
+        sessionStorage.setItem('photo_ver', VERSION);
+      }
+    })();
+  </script>
+
   <title>NADAUN 나다운 | 행사 · 기업 · 콘서트 B2B 전문 비주얼 제작팀</title>
   <meta name="description" content="NADAUN — 삼성, 현대, 펩시, LG 등 대기업 행사·콘서트·기업 B2B 전문 비주얼 제작팀. 35+ 프로젝트 수행. 기업 의전부터 대형 콘서트까지 원스톱 촬영 대행.">
   <meta name="keywords" content="사진작가, 행사사진, 기업사진, 콘서트사진, 광고사진, NADAUN, 나다운, 페스티벌촬영, 기업행사촬영, 콘서트촬영, 프로필촬영, 제품촬영, 웨딩촬영, event photographer, corporate photographer, concert photographer, Korea photographer, portfolio">
@@ -303,6 +327,9 @@
       background: #111; cursor: pointer;
       aspect-ratio: 16/9;
       overflow: hidden;
+      /* 2026-05-26: 화면 밖 카드 렌더링 skip — 큰 그리드 성능 ↑ */
+      content-visibility: auto;
+      contain-intrinsic-size: 0 380px;
     }
     /* span 클래스 무효화 — columns 레이아웃에선 불필요 */
     .pcard.c7,.pcard.c5,.pcard.c4,.pcard.c8,.pcard.c6 { }
