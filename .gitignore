@@ -1,10 +1,36 @@
+# NADAUN 사이트 .gitignore — 공통 baseline (BACKUP_RULE.md 참조)
+
+# OS
 .DS_Store
-.vercel
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Dependencies
 node_modules/
 
-# 대용량 이미지 (Cloudflare R2로 이관 예정)
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Vercel
+.vercel
+
+# 작업 백업 (BACKUP_RULE.md — git 이력 + 로컬 backups/ 2중 보호)
+backups/*
+!backups/.gitkeep
+_archive/
+
+# ─── 사이트별 (대용량 이미지 — Cloudflare R2로 이관 예정) ───
 images/
-backups/
 스크린샷/
 api/
 *.jpg
@@ -17,6 +43,8 @@ api/
 *.HEIC
 *.tif
 *.tiff
-Thumbs.db
 
-.vercel
+# 파비콘은 예외 (사이트에서 필요)
+!favicon.ico
+!favicon-*.png
+!apple-touch-icon.png
