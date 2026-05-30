@@ -18,3 +18,5 @@ api/
 *.tif
 *.tiff
 Thumbs.db
+
+.vercel
