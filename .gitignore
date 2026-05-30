@@ -1,3 +1,20 @@
 .DS_Store
-스크린샷/
 .vercel
+node_modules/
+
+# 대용량 이미지 (Cloudflare R2로 이관 예정)
+images/
+backups/
+스크린샷/
+api/
+*.jpg
+*.JPG
+*.jpeg
+*.JPEG
+*.png
+*.PNG
+*.heic
+*.HEIC
+*.tif
+*.tiff
+Thumbs.db
